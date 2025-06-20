@@ -252,7 +252,7 @@ export const ProductGridSection: React.FC<ProductGridProps> = ({
               if (img && !preloadedImages.has(img)) {
                 imagesToPreload.add(img);
               }
-            });
+        });
           }
         }
       }

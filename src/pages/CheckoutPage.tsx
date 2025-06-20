@@ -603,14 +603,14 @@ const CheckoutPage: React.FC = () => {
     try {
       await loadYooKassaScript();
 
-      const orderData = {
-        email,
+    const orderData = {
+      email,
         phone,
-        address: `${street}, ${house}${apartment ? `, кв. ${apartment}` : ''}`,
+      address: `${street}, ${house}${apartment ? `, кв. ${apartment}` : ''}`,
         delivery_time: `${selectedDate} ${selectedTimeSlot}`,
         order_time: new Date().toISOString(),
-        items: cartItems.map(item => ({
-          name: item.product.name,
+      items: cartItems.map(item => ({
+        name: item.product.name,
           quantity: item.quantity
         })),
         total_amount: total

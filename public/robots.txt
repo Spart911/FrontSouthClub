@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://lumni-p5kk6a6g5-egors-projects-da0957dd.vercel.app/sitemap.xml 

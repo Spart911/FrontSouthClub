@@ -43,3 +43,4 @@ export const useIntersectionObserver = (
   return { ref, isIntersecting, hasIntersected };
 };
 
+

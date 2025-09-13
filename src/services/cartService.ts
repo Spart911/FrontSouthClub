@@ -1,70 +1,126 @@
-import type { Product } from '../types/product';
+// Define Product interface locally to avoid import issues
+interface Product {
+  id: string;
+  name: string;
+  soon?: boolean;
+  color?: string;
+  composition?: string;
+  print_technology?: string;
+  size: number[];
+  price: number;
+  photos: ProductPhoto[];
+  order_number?: number;
+}
 
-interface CartItem {
-  product: Product;
+interface ProductPhoto {
+  id: string;
+  product_id: string;
+  name: string;
+  file_path: string;
+  priority: number;
+}
+
+export interface CartItem {
+  id: string;
+  name: string;
+  size: string;
+  price: number;
   quantity: number;
-  selectedColor: number;
+  image?: string;
+  photo?: {
+    file_path: string;
+    priority: number;
+  };
 }
 
-class CartService {
-  private readonly CART_KEY = 'lumni_cart';
+const CART_STORAGE_KEY = 'cart';
 
-  getCart(): CartItem[] {
-    const cart = localStorage.getItem(this.CART_KEY);
-    return cart ? JSON.parse(cart) : [];
-  }
+export const cartService = {
+  // Get all cart items from localStorage
+  getCartItems(): CartItem[] {
+    try {
+      const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+      return savedCart ? JSON.parse(savedCart) : [];
+    } catch (error) {
+      console.error('Error loading cart from localStorage:', error);
+      return [];
+    }
+  },
 
-  addToCart(product: Product, selectedColor: number): void {
-    const cart = this.getCart();
-    const existingItemIndex = cart.findIndex(
-      item => item.product.id === product.id && item.selectedColor === selectedColor
+  // Add item to cart
+  addToCart(product: Product, selectedSize: number): void {
+    const cartItems = this.getCartItems();
+    const sizeLabel = this.getSizeLabel(selectedSize);
+    
+    // Check if item with same product ID and size already exists
+    const existingItemIndex = cartItems.findIndex(
+      item => item.id === product.id && item.size === sizeLabel
     );
 
-    if (existingItemIndex !== -1) {
-      cart[existingItemIndex].quantity += 1;
+    if (existingItemIndex >= 0) {
+      // Update quantity of existing item
+      cartItems[existingItemIndex].quantity += 1;
     } else {
-      cart.push({
-        product,
+      // Add new item
+      const mainPhoto = product.photos.find(p => p.priority === 0) || product.photos[0];
+      const newItem: CartItem = {
+        id: product.id,
+        name: product.name,
+        size: sizeLabel,
+        price: product.price,
         quantity: 1,
-        selectedColor
-      });
+        photo: mainPhoto ? {
+          file_path: mainPhoto.file_path,
+          priority: mainPhoto.priority
+        } : undefined
+      };
+      cartItems.push(newItem);
     }
 
-    localStorage.setItem(this.CART_KEY, JSON.stringify(cart));
-  }
+    // Save to localStorage
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+    
+    // Dispatch custom event to notify components
+    window.dispatchEvent(new CustomEvent('cartUpdated'));
+  },
 
-  removeFromCart(productId: string, selectedColor: number): void {
-    const cart = this.getCart();
-    const updatedCart = cart.filter(
-      item => !(item.product.id === productId && item.selectedColor === selectedColor)
+  // Remove item from cart
+  removeFromCart(productId: string, size: string): void {
+    const cartItems = this.getCartItems();
+    const updatedItems = cartItems.filter(
+      item => !(item.id === productId && item.size === size)
     );
-    localStorage.setItem(this.CART_KEY, JSON.stringify(updatedCart));
-  }
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(updatedItems));
+    window.dispatchEvent(new CustomEvent('cartUpdated'));
+  },
 
-  updateQuantity(productId: string, selectedColor: number, quantity: number): void {
-    const cart = this.getCart();
-    const itemIndex = cart.findIndex(
-      item => item.product.id === productId && item.selectedColor === selectedColor
+  // Update item quantity
+  updateQuantity(productId: string, size: string, quantity: number): void {
+    const cartItems = this.getCartItems();
+    const updatedItems = cartItems.map(item => 
+      item.id === productId && item.size === size
+        ? { ...item, quantity: Math.max(1, quantity) }
+        : item
     );
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(updatedItems));
+    window.dispatchEvent(new CustomEvent('cartUpdated'));
+  },
 
-    if (itemIndex !== -1) {
-      if (quantity <= 0) {
-        cart.splice(itemIndex, 1);
-      } else {
-        cart[itemIndex].quantity = quantity;
-      }
-      localStorage.setItem(this.CART_KEY, JSON.stringify(cart));
-    }
-  }
-
-  getTotalItems(): number {
-    const cart = this.getCart();
-    return cart.reduce((total, item) => total + item.quantity, 0);
-  }
-
+  // Clear entire cart
   clearCart(): void {
-    localStorage.removeItem(this.CART_KEY);
-  }
-}
+    localStorage.removeItem(CART_STORAGE_KEY);
+    window.dispatchEvent(new CustomEvent('cartUpdated'));
+  },
 
-export const cartService = new CartService(); 
+  // Get cart items count
+  getCartItemsCount(): number {
+    const cartItems = this.getCartItems();
+    return cartItems.reduce((total, item) => total + item.quantity, 0);
+  },
+
+  // Get size label from number
+  getSizeLabel(size: number): string {
+    const sizeLabels = ['XS', 'S', 'M', 'L', 'XL'];
+    return sizeLabels[size] || 'Unknown';
+  }
+};

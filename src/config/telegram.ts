@@ -1,2 +1,0 @@
-export const TELEGRAM_BOT_TOKEN = '8124640783:AAEyfxf0LOdMXqF3yaUwaAqYUBRzfB1FQsY'; // Замените на токен вашего бота
-export const TELEGRAM_CHAT_ID = '5132596178'; // Замените на ID чата для уведомлений 

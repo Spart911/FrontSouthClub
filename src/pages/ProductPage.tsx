@@ -1,628 +1,955 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { ProductGallery } from '../components/ProductGallery';
-import { lampService } from '../services/lampService';
+import { apiService, type Product, buildFileUrl, getSizeLabel } from '../services/api';
 import { cartService } from '../services/cartService';
-import type { Product, ProductColor } from '../types/product';
-import { ProductGridSection } from '../components/ProductGrid';
-import { Button } from '../components/Button';
-import { useCart } from '../contexts/CartContext';
 
-const PageContainer = styled.div`
+
+const PageWrapper = styled.div`
+  background: white;
   min-height: 100vh;
-  background-color: white;
+  padding: 8vw 20px 40px;
   position: relative;
-  overflow: hidden;
+  @media (max-width: 1400px) {
+    padding: 10vw 15px 30px;
+  }
+  @media (max-width: 1200px) {
+    padding: 12vw 15px 30px;
+  }
+    @media (max-width: 1025px) {
+    padding: 15vw 15px 30px;
+  }
+    @media (max-width: 760px) {
+    padding: 20vw 15px 30px;
+  }
 `;
 
-const BlackBar = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 80px;
-  background-color: black;
-  z-index: 0;
-  pointer-events: none;
+const Container = styled.div`
+  max-width: 90%;
+  margin: 0 auto;
 `;
 
-const ContentWrapper = styled.div`
+const ProductSection = styled.section`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  min-height: calc(100vh - 80px);
-  margin-top: 80px;
-  position: relative;
-  z-index: 1;
+  gap: 60px;
+  margin-bottom: 60px;
   
-  @media (max-width: 768px) {
+  @media (max-width: 1199px) {
     grid-template-columns: 1fr;
-    margin-top: 60px;
+    gap: 40px;
   }
-`;
-
-const ProductInfo = styled.div`
-  padding: 4rem;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  z-index: 2;
-  background: white;
   
   @media (max-width: 768px) {
-    padding: 1rem;
-    margin-top: 0;
-    position: relative;
-    z-index: 3;
+    gap: 30px;
+    margin-bottom: 40px;
   }
 `;
 
-const Title = styled.h1`
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 2.5rem;
-  margin-bottom: 0.1rem;
-  color: #000;
+const ImageSection = styled.div`
   position: relative;
-  z-index: 3;
-  
-  @media (max-width: 768px) {
-    font-size: 2rem;
-    margin-top: 20px;
-  }
 `;
 
-const Designer = styled.p`
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 1.2rem;
-  color: #000;
-  margin-bottom: 0.2rem;
-`;
+const MainImage = styled.div`
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
 
-const Price = styled.div`
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: #000;
-`;
-
-const ColorSection = styled.div`
-  margin-bottom: 2rem;
-`;
-
-const ColorTitle = styled.h3`
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 1.2rem;
-  margin-bottom: 0.2rem;
-  color: #000;
-`;
-
-const ColorOptions = styled.div`
-  display: flex;
-  gap: 1rem;
-`;
-
-const ColorOption = styled.button<{ $isSelected: boolean; $color: string }>`
-  width: 30px;
-  height: 30px;
-  padding: 2px;
-  border-radius: 0;
-  border: 2px solid #E5E5E5;
-  background-color: ${props => props.$color};
+  background: #fff;
+  overflow: hidden;
   cursor: pointer;
-  transition: border-color 0.3s;
-
-  &:hover {
-    border-color: #666;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    pointer-events: none;
+  }
+  
+  &:hover img {
+    transform: scale(1.05);
   }
 `;
 
 const AddToCartButton = styled.button`
-  background-color: rgb(0, 133, 91);
+  position: absolute;
+  top: 30vw;
+    left: 25vw;
+  min-width: 700px;
+  background: #1e3ea8;
   color: white;
-  border: none;
-  padding: 1.2rem 2.4rem;
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 1rem;
+  border-radius: 50px;
+  border: 10px solid rgb(255, 255, 255);
+  padding: 5px 0px;
+  font-family: 'HeatherGreen', 'Helvetica', sans-serif;
+  font-size: 5vw;
+  
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
-  width: 100%;
+  transition: all 0.3s ease;
+  z-index: 10;
 
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-  border-radius: 0;
-
+  @media (max-width: 1200px) {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    display: block;
+    width: 100%;
+    max-width: 480px;
+    min-width: 0;
+    margin: 20px auto 0;
+    font-size: 2.4rem;
+    padding: 16px 24px;
+  }
+  
   &:hover {
-    background-color: rgb(3, 161, 111);
+    background: #1e3ea8;
+    border: 10px solidrgb(38, 68, 167);
+    transform: translateY(-2px);
   }
-
-  @media (max-width: 768px) {
-    font-size: 1rem;
-    padding: 1rem 2rem;
+  
+  &:active {
+    transform: translateY(0);
   }
-`;
-
-const LoadingContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-`;
-
-const ErrorContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  color: red;
-`;
-
-const DeliveryInfo = styled.div`
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 0.9rem;
-  color: #666;
-  margin-top: 1rem;
-  line-height: 1.4;
-`;
-
-const DescriptionSection = styled.div`
-  margin-top: 0.25rem;
-  padding-left: 8vw;
-  padding-right: 8vw;
-  grid-column: 1 / -1;
-  max-width: 1400px;
-  margin-left: 0;
-  margin-right: 0;
-  width: 100%;
-  box-sizing: border-box;
   
   @media (max-width: 768px) {
-    padding-left: 18px;
-    padding-right: 18px;
-    margin-top: 1rem;
+    position: relative;
+    bottom: auto;
+    right: auto;
+    width: 100%;
+    margin-top: 20px;
+    padding: 20px;
+    font-size: 2rem;
   }
 `;
 
-const DescriptionHeader = styled.div`
+const InfoSection = styled.div`
   display: flex;
-  align-items: center;
-  gap: 1rem;
-  cursor: pointer;
-  user-select: none;
+  flex-direction: column;
+  gap: 10px;
+  
+  @media (max-width: 768px) {
+    gap: 25px;
+  }
 `;
 
-const DescriptionContent = styled.div<{ $isOpen: boolean }>`
-  height: ${props => props.$isOpen ? 'auto' : '0'};
-  opacity: ${props => props.$isOpen ? '1' : '0'};
-  overflow: hidden;
-  transition: all 0.3s ease;
-  margin-top: ${props => props.$isOpen ? '0.1rem' : '0'};
-  margin-bottom: ${props => props.$isOpen ? '2rem' : '0'};
-`;
-
-const DescriptionText = styled.p`
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 1rem;
-  line-height: 1.6;
+const ProductTitle = styled.h1`
+  font-size: 4rem;
+  font-family: 'HeatherGreen', 'Helvetica', sans-serif;
+  font-weight: 900;
   color: #000;
+  margin: 0;
+  
+  @media (max-width: 1679px) {
+    font-size: 3.2rem;
+  }
+  
+  @media (max-width: 1400px) {
+    font-size: 3rem;
+  }
+  
+  @media (max-width: 1200px) {
+    font-size: 2.6rem;
+  }
+  
+  @media (max-width: 1024px) {
+    font-size: 2.4rem;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 2.3rem;
+  }
+`;
 
+const Price = styled.div`
+  font-size: 2.4rem;
+  font-family: 'HeatherGreen', 'Helvetica', sans-serif;
+  font-weight: 700;
+  color:rgb(0, 0, 0);
+  
+  @media (max-width: 1679px) {
+    font-size: 2rem;
+  }
+  
+  @media (max-width: 1400px) {
+    font-size: 1.9rem;
+  }
+  
+  @media (max-width: 1200px) {
+    font-size: 1.7rem;
+  }
+  
+  @media (max-width: 1024px) {
+    font-size: 1.6rem;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
 `;
 
 const SpecificationsSection = styled.div`
-  margin-top: -1rem;
-  padding-left: 8vw;
-  padding-right: 8vw;
-  grid-column: 1 / -1;
-  max-width: 1400px;
-  margin-left: 0;
-  margin-right: 0;
-  width: 100%;
-  box-sizing: border-box;
-  
-  @media (max-width: 768px) {
-    padding-left: 18px;
-    padding-right: 18px;
-  }
-`;
-
-const SpecificationsHeader = styled.div`
   display: flex;
-  align-items: center;
-  gap: 1rem;
-  cursor: pointer;
-  user-select: none;
-`;
+  flex-direction: column;
 
-const SpecificationsIcon = styled.div<{ $isOpen: boolean }>`
-  width: 20px;
-  height: 20px;
-  position: relative;
-  
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    background-color: #000;
-    transition: transform 0.3s ease;
-  }
-  
-  &::before {
-    width: 2px;
-    height: 20px;
-    left: 9px;
-    top: 0;
-  }
-  
-  &::after {
-    width: 20px;
-    height: 2px;
-    left: 0;
-    top: 9px;
-    transform: ${props => props.$isOpen ? 'rotate(90deg)' : 'rotate(0)'};
-  }
-`;
-
-const SpecificationsContent = styled.div<{ $isOpen: boolean }>`
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-  margin-bottom: ${props => props.$isOpen ? '2rem' : '0'};
-  height: ${props => props.$isOpen ? 'auto' : '0'};
-  opacity: ${props => props.$isOpen ? '1' : '0'};
-  overflow: hidden;
-  transition: all 0.3s ease;
-  margin-top: ${props => props.$isOpen ? '0.1rem' : '0'};
-  
-  @media (max-width: 1200px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  
-  @media (max-width: 900px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
 `;
 
 const SpecificationsTitle = styled.h2`
- 
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 2rem;
-  margin-bottom: 1rem;
+  font-size: 2.4rem;
+  font-family: 'HeatherGreen', 'Helvetica', sans-serif;
+  font-weight: 700;
   color: #000;
-`;
-
-const SpecificationItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-`;
-
-const SpecificationLabel = styled.span`
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 0.9rem;
-  color: #666;
-`;
-
-const SpecificationValue = styled.span`
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 1rem;
-  color: #000;
-`;
-
-const ReviewsSection = styled.div`
-  margin-top: -1rem;
-  padding-left: 8vw;
-  padding-right: 8vw;
-  grid-column: 1 / -1;
-  max-width: 1400px;
-  margin-left: 0;
-  margin-right: 0;
-  width: 100%;
-  box-sizing: border-box;
+  margin: 0;
+  
+  @media (max-width: 1679px) {
+    font-size: 1.9rem;
+  }
+  
+  @media (max-width: 1400px) {
+    font-size: 1.8rem;
+  }
+  
+  @media (max-width: 1200px) {
+    font-size: 1.6rem;
+  }
+  
+  @media (max-width: 1024px) {
+    font-size: 1.5rem;
+  }
   
   @media (max-width: 768px) {
-    padding-left: 18px;
-    padding-right: 18px;
+    font-size: 1.4rem;
   }
 `;
 
-const ReviewsHeader = styled.div`
+const SpecificationsList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
   display: flex;
+  flex-direction: column;
+`;
+
+const SpecificationItem = styled.li`
+  display: flex;
+  justify-content: start;
   align-items: center;
-  gap: 1rem;
-  cursor: pointer;
-  user-select: none;
-`;
-
-const ReviewsContent = styled.div<{ $isOpen: boolean }>`
-  height: ${props => props.$isOpen ? 'auto' : '0'};
-  opacity: ${props => props.$isOpen ? '1' : '0'};
-  overflow: hidden;
-  transition: all 0.3s ease;
-  margin-top: ${props => props.$isOpen ? '0.1rem' : '0'};
-  margin-bottom: ${props => props.$isOpen ? '2rem' : '0'};
-`;
-
-const ReviewItem = styled.div`
-  padding: 1rem 0;
-  border-bottom: 1px solid #E5E5E5;
+gap: 10px;
   
   &:last-child {
     border-bottom: none;
   }
 `;
 
-const ReviewAuthor = styled.div`
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 1rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
+const SpecificationLabel = styled.span`
+  font-size: 2rem;
+  font-family: 'HeatherGreen', 'Helvetica', sans-serif;
   color: #000;
-`;
-
-const ReviewText = styled.p`
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 1rem;
-  line-height: 1.6;
-  color: #000;
-`;
-
-const OtherProductsSection = styled.div`
-  margin-top: -1rem;
-  padding-left: 8vw;
-  padding-right: 8vw;
-  grid-column: 1 / -1;
-  max-width: 1400px;
-  margin-left: 0;
-  margin-bottom: 2rem;
-  margin-right: 0;
-  width: 100%;
-  box-sizing: border-box;
+  
+  @media (max-width: 1679px) {
+    font-size: 1.6rem;
+  }
+  
+  @media (max-width: 1400px) {
+    font-size: 1.5rem;
+  }
+  
+  @media (max-width: 1200px) {
+    font-size: 1.4rem;
+  }
+  
+  @media (max-width: 1024px) {
+    font-size: 1.3rem;
+  }
   
   @media (max-width: 768px) {
-    padding-left: 18px;
-    padding-right: 18px;
+    font-size: 1.2rem;
   }
 `;
 
-const OtherProductsTitle = styled.h2`
-  font-family: var(--font-buch), "Helvetica", sans-serif;
+const SpecificationValue = styled.span`
   font-size: 2rem;
-  margin-bottom: 0.8rem;
+  font-family: 'HeatherGreen', 'Helvetica', sans-serif;
+  color: #000000;
+  font-weight: 500;
+  
+  @media (max-width: 1679px) {
+    font-size: 1.6rem;
+  }
+  
+  @media (max-width: 1400px) {
+    font-size: 1.5rem;
+  }
+  
+  @media (max-width: 1200px) {
+    font-size: 1.4rem;
+  }
+  
+  @media (max-width: 1024px) {
+    font-size: 1.3rem;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+  }
+`;
+
+const SizeSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const SizeTitle = styled.h3`
+  font-size: 2rem;
+  font-family: 'HeatherGreen', 'Helvetica', sans-serif;
+  font-weight: 700;
   color: #000;
-  max-width: 1400px;
-  margin-left: 0;
-  box-sizing: border-box;
+  margin: 0;
+  
+  @media (max-width: 1679px) {
+    font-size: 1.7rem;
+  }
+  
+  @media (max-width: 1400px) {
+    font-size: 1.6rem;
+  }
+  
+  @media (max-width: 1200px) {
+    font-size: 1.5rem;
+  }
+  
+  @media (max-width: 1024px) {
+    font-size: 1.4rem;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 1.3rem;
+  }
 `;
 
-const ColorName = styled.span`
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 0.9rem;
-  color: #fff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  position: absolute;
-  bottom: 5px;
-  left: 5px;
-  right: 5px;
+const SizeButtons = styled.div`
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    gap: 10px;
+  }
+`;
+
+const SizeButton = styled.button<{ $isActive: boolean }>`
+  padding: 12px 24px;
+  border: ${props => props.$isActive ? '2px solid #999' : '1px solid #cfcfcf'};
+  background: white;
+  color: #000;
+  border-radius: 0;
+  font-family: 'HeatherGreen', 'Helvetica', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  
+  &:hover {
+    border-color: #bdbdbd;
+    background: #f7f7f7;
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: none;
+  }
+  
+  &:active {
+    background: #f0f0f0;
+    border-color: #bdbdbd;
+    color: #000;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 10px 20px;
+    font-size: 1.4rem;
+  }
+`;
+
+const GallerySection = styled.section`
+  margin-top: 60px;
+  
+  @media (max-width: 768px) {
+    margin-top: 40px;
+  }
+`;
+
+const GalleryTitle = styled.h2`
+  font-size: 4rem;
+  font-family: 'HeatherGreen', 'Helvetica', sans-serif;
+  font-weight: 700;
+  color: #000;
   text-align: center;
+  margin-bottom: 40px;
+  
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+  }
 `;
 
-const getSpecificationLabel = (key: string): string => {
-  const labels: { [key: string]: string } = {
-    switchType: 'Тип выключателя',
-    socketType: 'Тип цоколя',
-    maxPower: 'Макс. мощность ламп, Вт',
-    includesBulb: 'Лампочка в комплекте',
-    lightingArea: 'Площадь освещения, кв.м',
-    lightTemperature: 'Температура света, К',
-    lightFlow: 'Световой поток, Лм',
-    protectionDegree: 'Степень защиты',
-    lightType: 'Тип света',
-    dimensions: 'Размеры, мм',
-    powerType: 'Тип питания',
-    bulbCount: 'Количество ламп',
-    packaging: 'Упаковка',
-    cordLength: 'Длина шнура, м',
-    warranty: 'Гарантия',
-    materials: 'Материалы'
-  };
-  return labels[key] || key;
-};
+const GalleryGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  
+  @media (max-width: 1199px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+`;
 
-export const ProductPage: React.FC = () => {
+const GalleryItem = styled.div<{ $isActive: boolean }>`
+  position: relative;
+  aspect-ratio: 1;
+  border: 2px solid #e0e0e0;
+  background: #fff;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: #bdbdbd;
+    transform: translateY(-2px);
+  }
+  
+  img {
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    object-fit: cover;
+  }
+`;
+
+const RecommendedSection = styled.section`
+  margin-top: 60px;
+  padding: 40px 0 0;
+  background: #ffffff;
+  
+  @media (max-width: 768px) {
+    margin-top: 40px;
+    padding-top: 30px;
+  }
+`;
+
+const RecommendedTitle = styled.h2`
+  font-size: 5rem;
+  font-family: 'HeatherGreen', 'Helvetica', sans-serif;
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 32px;
+  color: rgb(0, 0, 0);
+`;
+
+const RecommendedGrid = styled.div`
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+  justify-items: stretch;
+
+  @media (max-width: 1440px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+`;
+const RecommendedCard = styled.a`
+  position: relative;
+  width: 100%;
+  max-width: none;
+  padding-bottom: 60px;
+  border: 5px solid #1e3ea8;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: visible;
+  text-decoration: none;
+  color: inherit;
+`;
+
+const RecommendedImageWrap = styled.div`
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+
+  img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    display: block;
+  }
+`;
+
+const RecommendedInfo = styled.div`
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  width: 90%;
+  padding: 12px 16px;
+  border-radius: 8px;
+  text-align: center;
+  z-index: 5;
+`;
+
+const RecommendedName = styled.div`
+  background: #1e3ea8;
+  color: #fff;
+  font-weight: 800;
+  font-size: 2.0rem;
+  text-transform: uppercase;
+  border-radius: 18px;
+  display: inline-block;
+  padding: 0px 12px;
+`;
+
+const RecommendedPrice = styled.div`
+  font-weight: 500;
+  font-size: 1.6rem;
+  color: #000;
+`;
+
+const LightboxOverlay = styled.div<{ $isOpen: boolean }>`
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: ${p => (p.$isOpen ? 'flex' : 'none')};
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+`;
+
+const LightboxContent = styled.div`
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border: 2px solid #ffffff22;
+  }
+`;
+
+const LightboxButton = styled.button`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border: 1px solid #ffffff44;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-family: 'HeatherGreen', 'Helvetica', sans-serif;
+  font-size: 1.6rem;
+  transition: background 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    background: rgba(255,255,255,0.2);
+    border-color: #ffffff77;
+  }
+`;
+
+const PrevButton = styled(LightboxButton)`
+  left: -56px;
+
+  @media (max-width: 768px) {
+    left: 10px;
+  }
+`;
+
+const NextButton = styled(LightboxButton)`
+  right: -56px;
+
+  @media (max-width: 768px) {
+    right: 10px;
+  }
+`;
+
+const CloseButton = styled.button`
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: transparent;
+  color: #fff;
+  border: 1px solid #ffffff44;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-family: 'HeatherGreen', 'Helvetica', sans-serif;
+  font-size: 1.6rem;
+  transition: background 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    background: rgba(255,255,255,0.15);
+    border-color: #ffffff77;
+  }
+`;
+
+const MoreImagesOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(30, 62, 168, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: 'HeatherGreen', 'Helvetica', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+`;
+
+const LoadingSpinner = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-family: 'HeatherGreen', 'Helvetica', sans-serif;
+  font-size: 2rem;
+  color: #666;
+`;
+
+const CornerLogo = styled.img`
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 13vw;
+  height: auto;
+
+
+  @media (max-width: 768px) {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    top: 12px;
+  }
+`;
+
+const ErrorMessage = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-family: 'HeatherGreen', 'Helvetica', sans-serif;
+  font-size: 2rem;
+  color: #e74c3c;
+`;
+
+const Notification = styled.div<{ $isVisible: boolean }>`
+  position: fixed;
+  top: 20px;
+  right: ${props => props.$isVisible ? '20px' : '0px'};
+  background: #1e3ea8;
+  color: white;
+  padding: 15px 25px;
+  border-radius: 5px;
+  font-family: 'HeatherGreen', 'Helvetica', sans-serif;
+  font-size: 1.6rem;
+  z-index: 1000;
+  transform: translateX(${props => props.$isVisible ? '0' : '100%'});
+  transition: transform 0.3s ease;
+  
+  @media (max-width: 768px) {
+    top: 10px;
+    right: ${props => props.$isVisible ? '10px' : '0px'};
+    left: 10px;
+    text-align: center;
+  }
+`;
+
+const ProductPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const { addToCart, setShowCart } = useCart();
+  // const { addToCart } = useCart(); // Временно отключено
+  
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedColorIndex, setSelectedColorIndex] = useState<number>(0);
-  const [isSpecificationsOpen, setIsSpecificationsOpen] = useState(true);
-  const [isDescriptionOpen, setIsDescriptionOpen] = useState(true);
-  const [isReviewsOpen, setIsReviewsOpen] = useState(true);
-  const [otherProducts, setOtherProducts] = useState<Product[]>([]);
-  const [isAddedToCart, setIsAddedToCart] = useState(false);
-
+  const [selectedSize, setSelectedSize] = useState<number | null>(null);
+  const [showNotification, setShowNotification] = useState(false);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [recommended, setRecommended] = useState<Product[]>([]);
   useEffect(() => {
     const loadProduct = async () => {
+      if (!id) {
+        setError('ID товара не найден');
+        setLoading(false);
+        return;
+      }
+
       try {
-        if (!id) {
-          navigate('/');
-          return;
+        const productData = await apiService.getProduct(id);
+        setProduct(productData);
+        // Set first available size as selected
+        if (productData.size && productData.size.length > 0) {
+          setSelectedSize(productData.size[0]);
         }
-        const data = await lampService.getLampById(id);
-        if (!data) {
-          navigate('/');
-          return;
+        // Load recommended products
+        try {
+          const res = await apiService.getProducts(1, 20);
+          const list = (res.products || [])
+            .filter(p => p.id !== productData.id)
+            .sort((a, b) => (a.order_number ?? 0) - (b.order_number ?? 0))
+            .slice(0, 8);
+          setRecommended(list);
+        } catch (e) {
+          console.warn('Failed to load recommended products', e);
         }
-        setProduct(data);
       } catch (err) {
-        console.error(err);
-        navigate('/');
+        setError('Ошибка загрузки товара');
+        console.error('Error loading product:', err);
       } finally {
         setLoading(false);
       }
     };
 
     loadProduct();
-  }, [id, navigate]);
-
-  useEffect(() => {
-    const loadOtherProducts = async () => {
-      try {
-        const products = await lampService.getAllLamps();
-        // Исключаем текущий продукт из списка
-        const filteredProducts = products.filter(p => p.id !== id);
-        setOtherProducts(filteredProducts);
-      } catch (err) {
-        console.error('Ошибка при загрузке других продуктов:', err);
-      }
-    };
-
-    loadOtherProducts();
   }, [id]);
 
+  const handleImageClick = (index: number) => {
+    // Не меняем основное фото, только открываем лайтбокс на выбранном индексе
+    setLightboxIndex(index);
+    setIsLightboxOpen(true);
+  };
+
+  // Размер фиксирован для текущей модели товара
+
+  const handleAddToCart = () => {
+    if (!product || selectedSize === null) {
+      alert('Пожалуйста, выберите размер');
+      return;
+    }
+
+    // Add to cart using cart service
+    cartService.addToCart(product, selectedSize);
+    
+    setShowNotification(true);
+    setTimeout(() => setShowNotification(false), 3000);
+  };
+
+  const handleMainImageClick = () => {
+    setLightboxIndex(selectedImage || 0);
+    setIsLightboxOpen(true);
+  };
+
+  const handleLightboxClose = useCallback(() => {
+    setIsLightboxOpen(false);
+  }, []);
+
+  const showPrev = useCallback(() => {
+    if (!product?.photos?.length) return;
+    setLightboxIndex(prev => (prev - 1 + product.photos.length) % product.photos.length);
+  }, [product]);
+
+  const showNext = useCallback(() => {
+    if (!product?.photos?.length) return;
+    setLightboxIndex(prev => (prev + 1) % product.photos.length);
+  }, [product]);
+
+  useEffect(() => {
+    if (!isLightboxOpen) return;
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') handleLightboxClose();
+      if (e.key === 'ArrowLeft') showPrev();
+      if (e.key === 'ArrowRight') showNext();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isLightboxOpen, handleLightboxClose, showPrev, showNext]);
+
   if (loading) {
-    return null;
+    return (
+      <PageWrapper>
+        <Container>
+          <LoadingSpinner>Загрузка товара...</LoadingSpinner>
+        </Container>
+      </PageWrapper>
+    );
   }
 
   if (error || !product) {
-    return <ErrorContainer>{error || 'Продукт не найден'}</ErrorContainer>;
+    return (
+      <PageWrapper>
+        <Container>
+          <ErrorMessage>
+            {error || 'Товар не найден'}
+          </ErrorMessage>
+        </Container>
+      </PageWrapper>
+    );
   }
 
-  const selectedColor = product.colors[selectedColorIndex];
-  const images = [
-    selectedColor.mainImage,
-    selectedColor.secondaryImage,
-    ...(selectedColor.additionalImages || [])
-  ].filter(Boolean);
-
-  const getDeliveryDate = () => {
-    const date = new Date();
-    date.setDate(date.getDate() + 7);
-    return date.toLocaleDateString('ru-RU', {
-      day: 'numeric',
-      month: 'long'
-    });
-  };
-
-  const getFeatures = () => {
-    const features = { ...product.specifications };
-    if (product.colors && product.colors[selectedColorIndex]) {
-      features['Цвет'] = product.colors[selectedColorIndex].name;
-    }
-    return features;
-  };
-
-  const handleAddToCart = () => {
-    if (!product) return;
-    
-    addToCart(product, selectedColorIndex);
-    setShowCart(true);
-    setIsAddedToCart(true);
-    setTimeout(() => setIsAddedToCart(false), 2000);
+  const images = product.photos || [];
+  const specifications = {
+    color: product.color,
+    composition: product.composition,
+    print_technology: product.print_technology,
   };
 
   return (
-    <PageContainer>
-      <BlackBar />
-      <ContentWrapper>
-        <ProductGallery
-          images={images}
-          selectedImage={selectedImage}
-          onImageSelect={setSelectedImage}
-          productName={product.name}
-        />
-        <ProductInfo>
-          <Title>{product.name}</Title>
-          <Designer>Высота: {product.size} см</Designer>
-          
-          <ColorSection>
-            <ColorTitle>Цвет</ColorTitle>
-            <ColorOptions>
-              {product.colors.map((colorVariant, index) => (
-                <ColorOption
+    <PageWrapper>
+      <CornerLogo src={'/images/production/logo_SC.png'} alt="SOUTH CLUB" loading="lazy" decoding="async" />
+      <Container>
+        <ProductSection>
+          <ImageSection>
+            <MainImage onClick={handleMainImageClick}>
+              <img 
+                src={images[selectedImage] ? buildFileUrl(images[selectedImage].file_path) : '/main_images/1.webp'} 
+                alt={product.name}
+                decoding="async"
+                loading="eager"
+              />
+            </MainImage>
+            <AddToCartButton onClick={handleAddToCart}>
+              ДОБАВИТЬ В КОРЗИНУ
+            </AddToCartButton>
+          </ImageSection>
+
+          <InfoSection>
+            <ProductTitle>{product.name}</ProductTitle>
+            
+            <SpecificationsSection>
+              <SpecificationsTitle>Характеристики:</SpecificationsTitle>
+              <SpecificationsList>
+                {product.color && (
+                  <SpecificationItem>
+                    <SpecificationLabel>Цвет: </SpecificationLabel>
+                    <SpecificationValue>{product.color}</SpecificationValue>
+                  </SpecificationItem>
+                )}
+                {product.composition && (
+                  <SpecificationItem>
+                    <SpecificationLabel>Состав: </SpecificationLabel>
+                    <SpecificationValue>{product.composition}</SpecificationValue>
+                  </SpecificationItem>
+                )}
+                {product.print_technology && (
+                  <SpecificationItem>
+                    <SpecificationLabel>Технология печати: </SpecificationLabel>
+                    <SpecificationValue>{product.print_technology}</SpecificationValue>
+                  </SpecificationItem>
+                )}
+              </SpecificationsList>
+            </SpecificationsSection>
+
+            <SizeSection>
+              <SizeTitle>Размеры на выбор</SizeTitle>
+              <SizeButtons>
+                {product.size?.map((size) => (
+                  <SizeButton
+                    key={size}
+                    $isActive={selectedSize === size}
+                    onClick={() => setSelectedSize(size)}
+                  >
+                    {getSizeLabel(size)}
+                  </SizeButton>
+                ))}
+              </SizeButtons>
+            </SizeSection>
+
+            <Price>Цена: {product.price.toLocaleString()} RUB</Price>
+          </InfoSection>
+        </ProductSection>
+
+        {images.length > 1 && (
+          <GallerySection>
+            <GalleryTitle>Галерея</GalleryTitle>
+            <GalleryGrid>
+              {images.slice(0, 5).map((image, index) => (
+                <GalleryItem
                   key={index}
-                  $isSelected={selectedColorIndex === index}
-                  $color={colorVariant.color}
-                  onClick={() => {
-                    setSelectedColorIndex(index);
-                    setSelectedImage(0);
-                  }}
-                />
+                  $isActive={selectedImage === index}
+                  onClick={() => handleImageClick(index)}
+                >
+                  <img src={buildFileUrl(image.file_path)} alt={`${product.name} - фото ${index + 1}`} decoding="async" loading="lazy" />
+                  {index === 4 && images.length > 5 && (
+                    <MoreImagesOverlay>+{images.length - 5}</MoreImagesOverlay>
+                  )}
+                </GalleryItem>
               ))}
-            </ColorOptions>
-          </ColorSection>
-          <Price>{product.price.toLocaleString()} ₽</Price>
+            </GalleryGrid>
+          </GallerySection>
+        )}
 
-          <AddToCartButton onClick={handleAddToCart}>
-            {isAddedToCart ? 'Добавлено в корзину' : 'Добавить в корзину'}
-          </AddToCartButton>
+        {recommended.length > 0 && (
+          <RecommendedSection>
+            <RecommendedTitle>Предложенные товары</RecommendedTitle>
+            <RecommendedGrid>
+              {recommended.map((p) => {
+                const preview = p.photos && p.photos.length > 0 ? buildFileUrl((p.photos[0]).file_path) : '/images/production/logo.png';
+                return (
+                  <RecommendedCard key={p.id} href={`/product/${p.id}`}>
+                    <RecommendedImageWrap>
+                      <img src={preview} alt={p.name} />
+                    </RecommendedImageWrap>
+                    <RecommendedInfo>
+                      <RecommendedName>{p.name}</RecommendedName>
+                      <RecommendedPrice>{p.price} RUB</RecommendedPrice>
+                    </RecommendedInfo>
+                  </RecommendedCard>
+                );
+              })}
+            </RecommendedGrid>
+          </RecommendedSection>
+        )}
+      </Container>
 
-          <DeliveryInfo>
-            Сделано специально для вас, доставка {getDeliveryDate()}<br />
-            На данный момент, доставка только в Ростове-на-Дону<br />
-          </DeliveryInfo>
-        </ProductInfo>
+      <Notification $isVisible={showNotification}>
+        Товар добавлен в корзину!
+      </Notification>
 
-        <DescriptionSection>
-          <DescriptionHeader onClick={() => setIsDescriptionOpen(!isDescriptionOpen)}>
-            <SpecificationsTitle>Описание</SpecificationsTitle>
-            <SpecificationsIcon $isOpen={isDescriptionOpen} />
-          </DescriptionHeader>
-          <DescriptionContent $isOpen={isDescriptionOpen}>
-            <DescriptionText>
-              {product.description}
-            </DescriptionText>
-          </DescriptionContent>
-        </DescriptionSection>
-
-        <SpecificationsSection>
-          <SpecificationsHeader onClick={() => setIsSpecificationsOpen(!isSpecificationsOpen)}>
-            <SpecificationsTitle>Характеристики</SpecificationsTitle>
-            <SpecificationsIcon $isOpen={isSpecificationsOpen} />
-          </SpecificationsHeader>
-          <SpecificationsContent $isOpen={isSpecificationsOpen}>
-            {Object.entries(getFeatures()).map(([key, value]) => (
-              <SpecificationItem key={key}>
-                <SpecificationLabel>{getSpecificationLabel(key)}</SpecificationLabel>
-                <SpecificationValue>{value}</SpecificationValue>
-              </SpecificationItem>
-            ))}
-          </SpecificationsContent>
-        </SpecificationsSection>
-
-        <ReviewsSection>
-          <ReviewsHeader onClick={() => setIsReviewsOpen(!isReviewsOpen)}>
-            <SpecificationsTitle>Отзывы</SpecificationsTitle>
-            <SpecificationsIcon $isOpen={isReviewsOpen} />
-          </ReviewsHeader>
-          <ReviewsContent $isOpen={isReviewsOpen}>
-            {product.reviews && product.reviews.map((review: { author: string; text: string }, index: number) => (
-              <ReviewItem key={index}>
-                <ReviewAuthor>{review.author}</ReviewAuthor>
-                <ReviewText>{review.text}</ReviewText>
-              </ReviewItem>
-            ))}
-          </ReviewsContent>
-        </ReviewsSection>
-
-        <OtherProductsSection>
-          <OtherProductsTitle>Другие товары</OtherProductsTitle>
-          {otherProducts && otherProducts.length > 0 && (
-            <ProductGridSection 
-              products={otherProducts} 
-              showHeader={false}
-              isProductPage={true}
-            />
+      <LightboxOverlay $isOpen={isLightboxOpen} onClick={handleLightboxClose}>
+        <CloseButton onClick={handleLightboxClose}>Закрыть</CloseButton>
+        <LightboxContent onClick={(e) => e.stopPropagation()}>
+          <PrevButton onClick={showPrev} aria-label="Предыдущее">‹</PrevButton>
+          {product.photos && product.photos[lightboxIndex] && (
+            <img src={buildFileUrl(product.photos[lightboxIndex].file_path)} alt={`Фото ${lightboxIndex + 1}`} />
           )}
-        </OtherProductsSection>
-      </ContentWrapper>
-    </PageContainer>
+          <NextButton onClick={showNext} aria-label="Следующее">›</NextButton>
+        </LightboxContent>
+      </LightboxOverlay>
+    </PageWrapper>
   );
-}; 
+};
+
+export default ProductPage;

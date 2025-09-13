@@ -1,389 +1,302 @@
-import styled from 'styled-components';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import styled, { css } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import type { Product, ProductColor } from '../types/product';
-import { Button } from './Button';
+import { apiService, type Product, buildFileUrl } from '../services/api';
 
-const ProductSection = styled.section<{ $isProductPage?: boolean }>`
-  padding: ${props => props.$isProductPage ? '0' : '80px 20px'};
-  background: white;
+const SectionWrapper = styled.section`
+  padding: 40px 20px;
+  background: #ffffff;
+  scroll-margin-top: 50px;
+`;
+
+const Title = styled.h2`
+  font-size: 5rem;
+  font-family: 'HeatherGreen', 'Helvetica', sans-serif;
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 32px;
+  color: rgb(0, 0, 0);
+`;
+const Grid = styled.div`
   width: 100%;
-  box-sizing: border-box;
-`;
-
-const SectionHeader = styled.div`
-  max-width: 1200px;
-  margin: 0 auto 40px;
-  width: 100%;
-`;
-
-const SectionTitle = styled.h2`
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 3.5rem;
-  line-height: 1;
-  margin-bottom: 1rem;
-  text-align: left;
-  font-weight: 500;
-  color: #000;
-
-  @media (max-width: 768px) {
-    font-size: 2rem;
-    text-align: center;
-  }
-`;
-
-const SectionDescription = styled.p`
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  line-height: 1.2;
-  font-size: 1.8rem;
-  color: #333;
-  margin: 0;
-
-  @media (max-width: 768px) {
-    font-size: 1rem;
-    text-align: center;
-  }
-`;
-
-const ProductGridContainer = styled.div`
+  max-width: 1800px;
+  margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 2rem;
-  width: 100%;
-  box-sizing: border-box;
-  max-width: 1200px;
-  margin: 0 auto;
-  
-  @media (max-width: 2000px) {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  
-  @media (max-width: 1200px) {
+  gap: 40px;
+  justify-items: stretch;
+
+  @media (max-width: 1440px) {
     grid-template-columns: repeat(3, 1fr);
   }
-  
-  @media (max-width: 900px) {
+
+  @media (max-width: 1024px) {
     grid-template-columns: repeat(2, 1fr);
   }
-  
-  @media (max-width: 768px) {
+
+  @media (max-width: 640px) {
     grid-template-columns: 1fr;
-    gap: 1rem;
   }
 `;
 
-const ProductCard = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`;
-
-const ProductImageContainer = styled.div`
+const CardWrapper = styled.div<{ $isComingSoon: boolean; $hasHover: boolean }>`
   position: relative;
   width: 100%;
-  padding-bottom: 100%;
-  overflow: hidden;
-`;
-
-const ProductImage = styled.div<{ $imageUrl: string; $isHovered: boolean }>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url(${props => props.$imageUrl});
-  background-size: cover;
-  background-position: center;
-  transition: opacity 0.3s ease;
-  opacity: 1;
-  will-change: opacity;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-`;
-
-const ProductImageHover = styled.div<{ $imageUrl: string; $isHovered: boolean }>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url(${props => props.$imageUrl});
-  background-size: cover;
-  background-position: center;
-  transition: opacity 0.3s ease;
-  opacity: ${props => props.$isHovered ? 1 : 0};
-  will-change: opacity;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-`;
-
-const ProductInfo = styled.div`
+  max-width: none;
+  padding-bottom: 60px;
+  border: 5px solid #1e3ea8;
+  background: #fff;
   display: flex;
-  line-height: 1;
   flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  overflow: visible;
+
+  ${({ $hasHover }) =>
+    $hasHover &&
+    css`
+      &:hover img.hoverImg {
+        opacity: 1;
+      }
+
+      &:hover img.mainImg {
+        opacity: 0;
+      }
+    `}
+
+  img {
+    pointer-events: none;
+    width: 100%;
+    object-fit: cover;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    display: block;
+  }
+
+  img.hoverImg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    z-index: 1;
+  }
+
+  ${({ $isComingSoon }) =>
+    $isComingSoon &&
+    css`
+      &::before {
+        content: '';
+        position: absolute;
+        top: 47%;
+        left: 0;
+        width: 100%;
+        height: 24%;
+        background: #1e3ea8;
+        transform: translateY(-50%);
+        z-index: 2;
+      }
+
+      &::after {
+        content: 'SOON';
+        position: absolute;
+        top: 35%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-weight: 900;
+        font-size: 10vw; 
+        text-align: center;
+        background: linear-gradient(to bottom, #1e3ea8 50%, white 50%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        z-index: 3;
+
+        @media (max-width: 1160px) {
+          font-size: 15vw;
+        }
+        @media (max-width: 870px) {
+          font-size: 22vw;
+        }
+        @media (max-width: 580px) {
+          font-size: 44vw;
+        }
+      }
+
+      img {
+        filter: blur(3px);
+        clip-path: inset(0);
+      }
+    `}
 `;
 
-const ProductName = styled.h3`
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 1.4rem;
-  margin-botton: 10px;
-  font-weight: 500;
-  color: #000;
-`;
+const ImageContainer = styled.div`
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
 
-const ProductDesigner = styled.p`
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 1.1rem;
-  color: #333;
-  margin: 0;
-`;
+  img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    display: block;
+  }
 
-const ProductSize = styled.p`
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 1rem;
-  color: #333;
-  margin: 0;
-`;
-
-const ProductPrice = styled.p`
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 1.3rem;
-  font-weight: 500;
-  margin: 0;
-  color: #000;
-`;
-
-const ColorOptions = styled.div`
-  display: flex;
-  gap: 10px;
-
-`;
-
-const ColorOption = styled.div<{ $color: string; $title: string }>`
-  width: 24px;
-  height: 24px;
-  background-color: ${props => props.$color};
-  cursor: pointer;
-  border: 1px solid #ddd;
-  transition: transform 0.2s ease;
-
-  &:hover {
-    transform: scale(1.1);
+  img.hoverImg {
+    opacity: 0;
+    z-index: 1;
   }
 `;
 
-const ButtonGroup = styled.div`
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
+const InfoBlock = styled.div`
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  width: 90%;
+  padding: 12px 16px;
+  border-radius: 8px;
+  text-align: center;
+  z-index: 5;
 `;
 
-interface ProductGridProps {
-  products: Product[];
-  onEdit?: (product: Product) => void;
-  onDelete?: (id: string) => void;
-  isAdmin?: boolean;
-  showHeader?: boolean;
-  isProductPage?: boolean;
-}
+const EmptyBlock = styled(InfoBlock)`
+  height: 60px;
+  padding: 0;
+`;
 
-export const ProductGridSection: React.FC<ProductGridProps> = ({ 
-  products, 
-  onEdit, 
-  onDelete,
-  isAdmin = false,
-  showHeader = true,
-  isProductPage = false
-}) => {
+const ProductName = styled.div`
+  background: #1e3ea8;
+  color: #fff;
+  font-weight: 800;
+  font-size: 2.4rem;
+  text-transform: uppercase;
+  border-radius: 18px;
+  display: inline-block;
+    padding: 0px 12px;
+`;
+
+const ProductPrice = styled.div`
+  font-weight: 500;
+  font-size: 1.7rem;
+  color: #000;
+`;
+
+export const ProductGrid: React.FC = () => {
   const navigate = useNavigate();
-  const [hoveredProduct, setHoveredProduct] = useState<string | null>(null);
-  const [selectedColors, setSelectedColors] = useState<{ [key: string]: number }>({});
-  const [preloadedImages, setPreloadedImages] = useState<Set<string>>(new Set());
-  const [visibleProducts, setVisibleProducts] = useState<Set<string>>(new Set());
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          const productId = entry.target.getAttribute('data-product-id');
-          if (productId) {
-            setVisibleProducts(prev => {
-              const next = new Set(prev);
-              if (entry.isIntersecting) {
-                next.add(productId);
-              } else {
-                next.delete(productId);
-              }
-              return next;
-            });
-          }
+    const loadProducts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await apiService.getProducts(1, 20); // Load fewer products initially
+        // Sort by order_number (ascending); undefined go to end
+        const sorted = [...response.products].sort((a: Product, b: Product) => {
+          const ao = (a as any).order_number ?? Number.MAX_SAFE_INTEGER;
+          const bo = (b as any).order_number ?? Number.MAX_SAFE_INTEGER;
+          return ao - bo;
         });
-      },
-      {
-        rootMargin: '50px 0px',
-        threshold: 0.1
+        setProducts(sorted);
+      } catch (err) {
+        console.error('Error loading products:', err);
+        setError('Ошибка загрузки товаров');
+        // Fallback to static data if API fails
+        setProducts([
+          { id: '1', name: 'T-SHIRT CREW RND', price: 2999, size: [1, 2, 3], photos: [] },
+          { id: '2', name: 'HOODIE ZIP RND', price: 4999, size: [1, 2, 3, 4], photos: [] },
+          { id: '3', name: 'JACKET RAIN RND', price: 7999, size: [2, 3, 4], photos: [] },
+        ] as unknown as Product[]);
+      } finally {
+        setLoading(false);
       }
+    };
+
+    // Delay initial load slightly to prioritize critical rendering
+    const timeoutId = setTimeout(loadProducts, 50);
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  if (loading) {
+    return (
+      <SectionWrapper id="products">
+        <Title>ТОВАРЫ</Title>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          minHeight: '200px',
+          fontFamily: 'var(--font-buch), "Helvetica", sans-serif',
+          color: '#1e3ea8'
+        }}>
+          Загрузка товаров...
+        </div>
+      </SectionWrapper>
     );
+  }
 
-    document.querySelectorAll('.product-card').forEach(card => {
-      observer.observe(card);
-    });
-
-    return () => observer.disconnect();
-  }, [products]);
-
-  useEffect(() => {
-    const imagesToPreload = new Set<string>();
-    
-    products.forEach(product => {
-      if (visibleProducts.has(product.id)) {
-        const colorIndex = selectedColors[product.id] || 0;
-        const color = product.colors[colorIndex];
-        
-        if (color) {
-          // Приоритизируем загрузку основных изображений
-          imagesToPreload.add(color.mainImage);
-          imagesToPreload.add(color.secondaryImage);
-          
-          // Дополнительные изображения загружаем только если они видны
-          if (color.additionalImages) {
-            color.additionalImages.forEach(img => {
-              if (img && !preloadedImages.has(img)) {
-                imagesToPreload.add(img);
-              }
-        });
-          }
-        }
-      }
-    });
-
-    imagesToPreload.forEach(url => {
-      if (!preloadedImages.has(url)) {
-        const img = new Image();
-        img.src = url;
-        img.onload = () => {
-          setPreloadedImages(prev => new Set([...prev, url]));
-        };
-      }
-    });
-  }, [products, selectedColors, visibleProducts, preloadedImages]);
-
-  // Инициализация выбранных цветов
-  useEffect(() => {
-    const initialColors: Record<string, number> = {};
-    products.forEach(product => {
-      if (product.colors && product.colors.length > 0) {
-        initialColors[product.id] = 0;
-      }
-    });
-    setSelectedColors(initialColors);
-  }, [products]);
-
-  const handleColorSelect = (productId: string, colorIndex: number) => {
-    setSelectedColors(prev => ({
-      ...prev,
-      [productId]: colorIndex
-    }));
-  };
-
-  const handleProductClick = (productId: string) => {
-    navigate(`/product/${productId}`);
-  };
-
-  if (!products || products.length === 0) {
-    return null;
+  if (error) {
+    console.warn('Using fallback data due to API error:', error);
   }
 
   return (
-    <ProductSection $isProductPage={isProductPage} className="product-section">
-      {showHeader && (
-        <SectionHeader>
-          <SectionTitle>Наши лампы</SectionTitle>
-          <SectionDescription>
-            Каждая лампа создана с любовью и вниманием к деталям
-          </SectionDescription>
-        </SectionHeader>
-      )}
-      <ProductGridContainer>
-        {products.map(product => {
-          const selectedColorIndex = selectedColors[product.id] || 0;
-          const selectedColor = product.colors?.[selectedColorIndex];
-
-          if (!selectedColor) return null;
-
+    <SectionWrapper id="products">
+      <Title>ТОВАРЫ</Title>
+      <Grid>
+        {products.map((product) => {
+          const isComingSoon = !!(product as any).soon;
+          const mainPhoto = product.photos.find(p => p.priority === 0) || product.photos[0];
+          const hoverPhoto = product.photos.find(p => p.priority === 1);
+          
           return (
-            <ProductCard 
+            <CardWrapper 
               key={product.id} 
-              className="product-card"
-              data-product-id={product.id}
+              $isComingSoon={isComingSoon} 
+              $hasHover={!!hoverPhoto}
+              onClick={() => !isComingSoon && navigate(`/product/${product.id}`)}
+              style={{ cursor: isComingSoon ? 'default' : 'pointer' }}
             >
-              <ProductImageContainer
-                onMouseEnter={() => setHoveredProduct(product.id)}
-                onMouseLeave={() => setHoveredProduct(null)}
-                onClick={() => handleProductClick(product.id)}
-              >
-                <ProductImage
-                  $imageUrl={selectedColor.mainImage}
-                  $isHovered={hoveredProduct === product.id}
-                />
-                <ProductImageHover
-                  $imageUrl={selectedColor.secondaryImage}
-                  $isHovered={hoveredProduct === product.id}
-                />
-              </ProductImageContainer>
-              <ProductInfo>
-                <ProductName>{product.name}</ProductName>
-                <ProductSize>Высота: {product.size} см</ProductSize>
-                <ProductPrice>{product.price.toLocaleString()} ₽</ProductPrice>
-                <ColorOptions>
-                  {product.colors?.map((color, index) => (
-                    <ColorOption
-                      key={index}
-                      $color={color.color}
-                      $title={color.name}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleColorSelect(product.id, index);
-                      }}
-                    />
-                  ))}
-                </ColorOptions>
-              </ProductInfo>
-              {isAdmin && (
-                <ButtonGroup>
-                  <Button onClick={() => onEdit?.(product)}>Редактировать</Button>
-                  <Button onClick={() => onDelete?.(product.id)}>Удалить</Button>
-                </ButtonGroup>
+              <ImageContainer>
+                {mainPhoto ? (
+                  <img 
+                    src={buildFileUrl(mainPhoto.file_path)} 
+                    alt={product.name} 
+                    className="mainImg"
+                    decoding="async"
+                    loading="lazy"
+                  />
+                ) : (
+                  <img src="/images/production/logo.png" alt={product.name} className="mainImg" decoding="async" loading="lazy" />
+                )}
+                
+                {hoverPhoto && (
+                  <img 
+                    src={buildFileUrl(hoverPhoto.file_path)} 
+                    alt={product.name} 
+                    className="hoverImg"
+                    decoding="async"
+                    loading="lazy"
+                  />
+                )}
+              </ImageContainer>
+
+              {isComingSoon ? (
+                <EmptyBlock />
+              ) : (
+                <InfoBlock>
+                  <ProductName>{product.name}</ProductName>
+                  <ProductPrice>{product.price} RUB</ProductPrice>
+                </InfoBlock>
               )}
-            </ProductCard>
+            </CardWrapper>
           );
         })}
-      </ProductGridContainer>
-    </ProductSection>
+      </Grid>
+    </SectionWrapper>
   );
 };
-
-const AdminControls = styled.div`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  display: flex;
-  gap: 10px;
-  z-index: 2;
-`;
-
-const AdminButton = styled.button`
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  border-radius: 4px;
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.9);
-  }
-`; 

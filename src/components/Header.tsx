@@ -1,9 +1,22 @@
-import styled from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { useCart } from '../contexts/CartContext';
 import { useState, useEffect } from 'react';
-import { CartSidebar } from './CartSidebar';
 import { MobileMenu } from './MobileMenu';
+import { CartModal } from './CartModal';
+import { cartService } from '../services/cartService';
+import { scrollToSection, scrollToSectionFromOtherPage } from '../utils/scrollToSection';
+
+const floatA = keyframes`
+  0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.35; }
+  50% { transform: translate3d(10px, -12px, 0) scale(1.05); opacity: 0.5; }
+  100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.35; }
+`;
+
+const floatB = keyframes`
+  0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.25; }
+  50% { transform: translate3d(-12px, 10px, 0) scale(1.08); opacity: 0.4; }
+  100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.25; }
+`;
 
 const HeaderContainer = styled.header<{ $isTransparent?: boolean }>`
   position: fixed;
@@ -16,34 +29,59 @@ const HeaderContainer = styled.header<{ $isTransparent?: boolean }>`
   justify-content: space-between;
   align-items: center;
   height: 80px;
-  background-color: ${props => props.$isTransparent ? 'transparent' : 'black'};
+  background-color: transparent;
   transition: background-color 0.3s ease;
+  overflow: visible;
 `;
 
-const Logo = styled.div`
-  font-size: 1.5rem;
-  font-weight: bold;
-  cursor: pointer;
-
-  @media (max-width: 768px) {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-  }
+const GradientBar = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #ff3b81 0%, #7a5cff 50%, #00e6a7 100%);
+  opacity: 0.9;
 `;
 
-const MenuButton = styled.button`
+const Glow = styled.div<{ $variant?: 'pink' | 'violet' | 'teal' }>`
+  position: absolute;
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+  ${(p) => p.$variant === 'pink' && css`
+    width: 180px; height: 180px; left: -40px; top: -40px;
+    background: radial-gradient(35% 35% at 50% 50%, rgba(255,59,129,0.55) 0%, rgba(255,59,129,0) 80%);
+    animation: ${floatA} 8s ease-in-out infinite;
+  `}
+  ${(p) => p.$variant === 'violet' && css`
+    width: 220px; height: 220px; right: 15%; top: -60px;
+    background: radial-gradient(35% 35% at 50% 50%, rgba(122,92,255,0.45) 0%, rgba(122,92,255,0) 80%);
+    animation: ${floatB} 10s ease-in-out infinite;
+  `}
+  ${(p) => p.$variant === 'teal' && css`
+    width: 240px; height: 240px; right: -60px; top: -80px;
+    background: radial-gradient(35% 35% at 50% 50%, rgba(0,230,167,0.35) 0%, rgba(0,230,167,0) 80%);
+    animation: ${floatA} 12s ease-in-out infinite;
+  `}
+`;
+
+
+
+const MenuButton = styled.button<{ $dark?: boolean }>`
   background: none;
   border: none;
-  color: white;
-  font-size: 2em;
+  
+  color: black;
+  font-size: 4em;
   cursor: pointer;
   padding: 0;
-  width: 2em;
+  width: 4em;
   height: 2em;
   display: none;
   align-items: center;
-  justify-content: center;
+  
+  // justify-content: center;
 
   @media (max-width: 768px) {
     display: flex;
@@ -51,9 +89,31 @@ const MenuButton = styled.button`
 `;
 
 const Navigation = styled.nav`
+  padding-top: 3vw;
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
-  gap: 40px;
+  justify-content: center;
+  width: 100%;
+`;
+
+const NavSurface = styled.div<{ $isTransparent?: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: ${p => p.$isTransparent ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.06)'};
+  border: 1px solid ${p => p.$isTransparent ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.1)'};
+  backdrop-filter: ${p => p.$isTransparent ? 'saturate(140%) blur(10px)' : 'blur(8px)'};
+
+  @media (max-width: 900px) {
+    gap: 16px;
+    padding: 10px 12px;
+    border-radius: 12px;
+  }
 
   @media (max-width: 768px) {
     display: none;
@@ -63,154 +123,174 @@ const Navigation = styled.nav`
 const NavList = styled.ul`
   display: flex;
   list-style: none;
-  gap: 40px;
+  gap: 18px;
   margin: 0;
   padding: 0;
 `;
 
-const NavItem = styled.li`
-  a {
-    color: white;
-    text-decoration: none;
-    font-size: 1rem;
-    opacity: 1;
-    transition: opacity 0.3s ease;
+const NavItem = styled.li``;
 
-    &:hover {
-      opacity: 0.8;
-    }
-  }
-`;
-
-const NavLink = styled(Link)`
-  color: white;
-  text-decoration: none;
-  font-size: 1rem;
-  opacity: 1;
-  transition: opacity 0.3s ease;
-
-  &:hover {
-    opacity: 0.8;
-  }
-`;
-
-const CartButton = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  margin-left: 40px;
+const NavLink = styled(Link)<{ $dark?: boolean }>`
   position: relative;
-  display: flex;
-  align-items: center;
-
-  @media (max-width: 768px) {
-    margin-left: 0;
-  }
-`;
-
-const CartCount = styled.span`
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: rgb(0, 133, 91);
-  color: white;
-  font-size: 0.8rem;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-buch), "Helvetica", sans-serif;
+  padding: 8px 12px;
+  text-decoration: none;
+  color: ${p => (p.$dark ? '#000' : '#fff')};
+  font-family: 'HeatherGreen', 'Helvetica', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 2vw;
+  transition: transform 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+  opacity: 0.92;
+
+  &:hover {
+    transform: translateY(-1px);
+    opacity: 1;
+       color: #00338e;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 4px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.25s ease;
+  }
+
+  &:hover::after {
+    transform: scaleX(1);
+  }
 `;
+
+// Убрали отдельную кнопку корзины — пункт «Корзина» теперь в навигации
 
 export const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { totalItems } = useCart();
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const isHomePage = location.pathname === '/';
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
+  const isHomePage = location.pathname === '/' || location.pathname.startsWith('/product/');
+  const isProductPage = location.pathname.startsWith('/product/');
+  const isLegalPage = ['/offer', '/privacy', '/terms', '/privacy-policy'].includes(location.pathname);
 
+  // Update cart count when component mounts or when cart changes
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      setIsScrolled(scrollPosition > 0);
+    const updateCartCount = () => {
+      setCartCount(cartService.getCartItemsCount());
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    updateCartCount();
+
+    // Listen for cart changes
+    const handleStorageChange = () => {
+      updateCartCount();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also listen for custom cart update events
+    window.addEventListener('cartUpdated', updateCartCount);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('cartUpdated', updateCartCount);
+    };
   }, []);
 
-  const handleNavigation = (path: string) => {
-    if (location.pathname === '/checkout') {
-      const event = new CustomEvent('navigationAttempt', { detail: { path } });
-      window.dispatchEvent(event);
-    } else {
-      navigate(path);
-    }
-    setIsMobileMenuOpen(false);
-  };
 
-  const handleShopClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (location.pathname === '/checkout') {
-      const event = new CustomEvent('navigationAttempt', { detail: { path: '/' } });
-      window.dispatchEvent(event);
-    } else {
+  const handleScrollToSection = (sectionId: string) => {
+    if (location.pathname !== '/') {
       navigate('/');
+      scrollToSectionFromOtherPage(sectionId);
+    } else {
+      // Even on home page, wait a bit for lazy components to load
       setTimeout(() => {
-        const productsSection = document.querySelector('.product-section');
-        if (productsSection) {
-          const offset = 80; // Отступ в пикселях
-          const elementPosition = productsSection.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - offset;
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-          });
-        }
+        scrollToSection(sectionId).catch(console.warn);
       }, 100);
     }
   };
 
+  const handleSectionClick = (e: React.MouseEvent, sectionId: string) => {
+    e.preventDefault();
+    handleScrollToSection(sectionId);
+  };
+
   return (
     <>
-      <HeaderContainer $isTransparent={isHomePage && !isScrolled}>
-        <MenuButton onClick={() => setIsMobileMenuOpen(true)}>☰</MenuButton>
-        <Logo onClick={() => handleNavigation('/')}>LUMNI</Logo>
+      <HeaderContainer $isTransparent={isHomePage}>
+        <GradientBar />
+        <Glow $variant="pink" />
+        <Glow $variant="violet" />
+        <Glow $variant="teal" />
+        <MenuButton $dark={!isHomePage} onClick={() => setIsMobileMenuOpen(true)}>☰</MenuButton>
         <Navigation>
-          <NavList>
-            <NavItem>
-              <NavLink to="/" onClick={handleShopClick}>Магазин</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink to="/made" onClick={(e) => {
-                e.preventDefault();
-                handleNavigation('/made');
-              }}>Производство</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink to="/about" onClick={(e) => {
-                e.preventDefault();
-                handleNavigation('/about');
-              }}>О нас</NavLink>
-            </NavItem>
-          </NavList>
+          <NavSurface $isTransparent={isHomePage || isLegalPage}>
+            <NavList>
+              {isLegalPage ? (
+                <>
+                  <NavItem>
+                    <NavLink $dark={isHomePage || isLegalPage} to="/" onClick={(e) => {
+                      e.preventDefault();
+                      navigate('/');
+                    }}>Главная</NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink $dark={isHomePage || isLegalPage} to="#" onClick={(e) => handleSectionClick(e, 'products')}>Товары</NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink $dark={isHomePage || isLegalPage} to="#" onClick={(e) => handleSectionClick(e, 'community')}>Комьюнити</NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink $dark={isHomePage || isLegalPage} to="#" onClick={(e) => {
+                      e.preventDefault();
+                      setIsCartOpen(true);
+                    }}>Корзина ({cartCount})</NavLink>
+                  </NavItem>
+                </>
+              ) : (
+                <>
+                  {isProductPage && (
+                    <NavItem>
+                      <NavLink $dark={isHomePage} to="/" onClick={(e) => {
+                        e.preventDefault();
+                        navigate('/');
+                      }}>Главная</NavLink>
+                    </NavItem>
+                  )}
+                  <NavItem>
+                    <NavLink $dark={isHomePage} to="#" onClick={(e) => handleSectionClick(e, 'products')}>Товары</NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink $dark={isHomePage} to="#" onClick={(e) => handleSectionClick(e, 'community')}>Комьюнити</NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink $dark={isHomePage} to="#" onClick={(e) => {
+                      e.preventDefault();
+                      setIsCartOpen(true);
+                    }}>Корзина ({cartCount})</NavLink>
+                  </NavItem>
+                </>
+              )}
+            </NavList>
+          </NavSurface>
         </Navigation>
-        <CartButton onClick={() => setIsCartOpen(true)}>
-          <svg width="2em" height="2em" xmlns="http://www.w3.org/2000/svg" fill="#FFFFFF" viewBox="0 0 16 16" role="img" cursor="pointer" opacity="1" aria-hidden="false" aria-label="payment:shopping_bag">
-            <path d="M6.75 4a1.25 1.25 0 1 1 2.5 0h1.5a2.75 2.75 0 0 0-5.5 0h1.5zm6.55 1H2.8v10h10.5V5z"></path>
-          </svg>
-          {totalItems > 0 && <CartCount>{totalItems}</CartCount>}
-        </CartButton>
       </HeaderContainer>
-      <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
       <MobileMenu 
         isOpen={isMobileMenuOpen} 
         onClose={() => setIsMobileMenuOpen(false)} 
+      />
+      <CartModal 
+        isOpen={isCartOpen} 
+        onClose={() => setIsCartOpen(false)} 
       />
     </>
   );

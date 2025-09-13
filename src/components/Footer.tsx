@@ -3,68 +3,85 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 const FooterContainer = styled.footer`
-  background: white;
-  padding: 40px 0;
-  border-top: 1px solid #E5E5E5;
+  background: #ffffff;
+  color: #000;
+  padding: 40px 20px;
+  border-top: 1px solid #e0e0e0;
 `;
 
-const FooterContent = styled.div`
+const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
+  gap: 30px;
+`;
 
+const LinksContainer = styled.div`
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  
   @media (max-width: 768px) {
     flex-direction: column;
     gap: 20px;
-    text-align: center;
-  }
-`;
-
-const FooterLinks = styled.div`
-  display: flex;
-  gap: 20px;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 10px;
   }
 `;
 
 const FooterLink = styled(Link)`
-  color: #666;
   text-decoration: none;
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 0.9rem;
-  transition: color 0.3s;
-
+  color: #000;
+  font-family: 'HeatherGreen', 'Helvetica', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  transition: color 0.3s ease;
+  
   &:hover {
-    color: rgb(0, 133, 91);
+    color: #666;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 1.4rem;
   }
 `;
 
-const FooterText = styled.p`
+const Divider = styled.div`
+  width: 1px;
+  height: 20px;
+  background: #e0e0e0;
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const Copyright = styled.div`
+  text-align: center;
   color: #666;
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 0.9rem;
-  margin: 0;
+  font-family: 'Helvetica', sans-serif;
+  font-size: 0.8rem;
+  
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+  }
 `;
 
 const Footer: React.FC = () => {
   return (
     <FooterContainer>
-      <FooterContent>
-        <FooterText>© 2025 Все права защищены</FooterText>
-        <FooterLinks>
-          <FooterLink to="/contacts">Контакты</FooterLink>
-          <FooterLink to="/privacy-policy">Политика конфиденциальности</FooterLink>
+      <Container>
+        <LinksContainer>
+          <FooterLink to="/offer">Оферта</FooterLink>
+          <Divider />
+          <FooterLink to="/privacy">Политика конфиденциальности</FooterLink>
+          <Divider />
           <FooterLink to="/terms">Пользовательское соглашение</FooterLink>
-        </FooterLinks>
-      </FooterContent>
+        </LinksContainer>
+        <Copyright>© 2025 SOUTH CLUB. Все права защищены.</Copyright>
+      </Container>
     </FooterContainer>
   );
 };
 
-export default Footer; 
+export default Footer;

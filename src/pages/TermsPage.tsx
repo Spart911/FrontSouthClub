@@ -4,150 +4,238 @@ import styled from 'styled-components';
 const PageWrapper = styled.div`
   background: white;
   min-height: 100vh;
-`;
-
-const TopBar = styled.div`
-  background: black;
-  height: 80px;
-  width: 100%;
+  padding: 40px 20px;
 `;
 
 const Container = styled.div`
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 60px 20px;
+  
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
 `;
 
 const Title = styled.h1`
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 2rem;
+margin-top: 80px;
+  font-size: 4rem;
+  font-family: 'HeatherGreen', 'Helvetica', sans-serif;
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 40px;
   color: #000;
-  margin-bottom: 30px;
+  
+  @media (max-width: 768px) {
+    font-size: 3rem;
+  }
 `;
 
 const Section = styled.section`
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 `;
 
 const SectionTitle = styled.h2`
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 1.5rem;
-  color: #000;
+  font-size: 2.4rem;
+  font-family: 'HeatherGreen', 'Helvetica', sans-serif;
+  font-weight: 700;
   margin-bottom: 20px;
+  color: #000;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
 `;
 
 const Text = styled.p`
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 1rem;
-  color: #666;
+  font-size: 1.6rem;
+  font-family: 'Helvetica', sans-serif;
   line-height: 1.6;
-  margin-bottom: 15px;
+  margin-bottom: 16px;
+  color: #333;
+  
+  @media (max-width: 768px) {
+    font-size: 1.4rem;
+  }
 `;
 
 const List = styled.ul`
-  font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 1rem;
-  color: #666;
+  font-size: 1.6rem;
+  font-family: 'Helvetica', sans-serif;
   line-height: 1.6;
-  margin-bottom: 15px;
+  margin-bottom: 16px;
+  color: #333;
   padding-left: 20px;
+  
+  @media (max-width: 768px) {
+    font-size: 1.4rem;
+  }
 `;
 
 const ListItem = styled.li`
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 `;
 
 const TermsPage: React.FC = () => {
   return (
     <PageWrapper>
-      <TopBar />
       <Container>
-        <Title>Пользовательское соглашение</Title>
+        <Title>ПОЛЬЗОВАТЕЛЬСКОЕ СОГЛАШЕНИЕ</Title>
         
         <Section>
+          <SectionTitle>1. ОБЩИЕ ПОЛОЖЕНИЯ</SectionTitle>
           <Text>
-            Настоящее Пользовательское соглашение регулирует отношения между Кравцовым Михаилом Михайловичем (далее – Продавец) и любым лицом (далее – Покупатель), возникающие при использовании интернет-ресурса.
+            Настоящее Пользовательское соглашение (далее — «Соглашение») регулирует отношения 
+            между интернет-магазином SOUTH CLUB (далее — «Продавец») и пользователями сайта 
+            (далее — «Пользователи»).
+          </Text>
+          <Text>
+            Использование сайта означает полное и безоговорочное принятие Пользователем 
+            всех условий настоящего Соглашения.
           </Text>
         </Section>
 
         <Section>
-          <SectionTitle>1. Общие положения</SectionTitle>
+          <SectionTitle>2. ПРЕДМЕТ СОГЛАШЕНИЯ</SectionTitle>
           <Text>
-            1.1. Настоящее Соглашение является публичной офертой в соответствии со ст. 437 Гражданского кодекса Российской Федерации.
+            Предметом настоящего Соглашения является предоставление Пользователю доступа к 
+            информационным ресурсам сайта и услугам интернет-магазина.
           </Text>
           <Text>
-            1.2. Акцептом настоящей оферты является осуществление Покупателем полной или частичной оплаты Товара.
-          </Text>
-        </Section>
-
-        <Section>
-          <SectionTitle>2. Предмет соглашения</SectionTitle>
-          <Text>
-            2.1. Продавец обязуется передать в собственность Покупателю товар, а Покупатель обязуется принять и оплатить товар на условиях настоящего Соглашения.
+            Сайт предоставляет Пользователю доступ к информации о товарах, возможность 
+            оформления заказов и получения консультаций.
           </Text>
         </Section>
 
         <Section>
-          <SectionTitle>3. Порядок оформления заказа</SectionTitle>
+          <SectionTitle>3. ПРАВА И ОБЯЗАННОСТИ ПОЛЬЗОВАТЕЛЯ</SectionTitle>
+          <Text>Пользователь имеет право:</Text>
           <List>
-            <ListItem>Покупатель выбирает товар из ассортимента, представленного на сайте</ListItem>
-            <ListItem>Покупатель указывает адрес доставки и контактные данные</ListItem>
-            <ListItem>Покупатель выбирает удобное время доставки</ListItem>
-            <ListItem>Покупатель оплачивает заказ одним из доступных способов</ListItem>
+            <ListItem>Получать информацию о товарах и услугах</ListItem>
+            <ListItem>Оформлять заказы на товары</ListItem>
+            <ListItem>Получать консультации по вопросам работы сайта</ListItem>
+            <ListItem>Обращаться в службу поддержки</ListItem>
+          </List>
+          <Text>Пользователь обязуется:</Text>
+          <List>
+            <ListItem>Предоставлять достоверную информацию при оформлении заказов</ListItem>
+            <ListItem>Соблюдать условия настоящего Соглашения</ListItem>
+            <ListItem>Не использовать сайт для незаконной деятельности</ListItem>
+            <ListItem>Не нарушать работу сайта и его компонентов</ListItem>
           </List>
         </Section>
 
         <Section>
-          <SectionTitle>4. Доставка</SectionTitle>
-          <Text>
-            4.1. Доставка осуществляется только в пределах города Ростов-на-Дону.
-          </Text>
-          <Text>
-            4.2. Стоимость доставки составляет 500 рублей.
-          </Text>
-          <Text>
-            4.3. Доставка осуществляется в течение 7-14 дней с момента оформления заказа.
-          </Text>
-        </Section>
-
-        <Section>
-          <SectionTitle>5. Оплата</SectionTitle>
-          <Text>
-            5.1. Оплата производится путем перечисления денежных средств на расчетный счет Продавца.
-          </Text>
-          <Text>
-            5.2. Способы оплаты:
-          </Text>
+          <SectionTitle>4. ПРАВА И ОБЯЗАННОСТИ ПРОДАВЦА</SectionTitle>
+          <Text>Продавец обязуется:</Text>
           <List>
-            <ListItem>Банковский перевод</ListItem>
-            <ListItem>Оплата по QR-коду</ListItem>
+            <ListItem>Предоставлять доступ к сайту и его функциям</ListItem>
+            <ListItem>Обеспечивать безопасность персональных данных Пользователей</ListItem>
+            <ListItem>Обрабатывать заказы в установленные сроки</ListItem>
+            <ListItem>Предоставлять качественную продукцию</ListItem>
+          </List>
+          <Text>Продавец имеет право:</Text>
+          <List>
+            <ListItem>Изменять условия Соглашения</ListItem>
+            <ListItem>Ограничивать доступ к сайту при нарушении условий</ListItem>
+            <ListItem>Собирать и обрабатывать персональные данные</ListItem>
+            <ListItem>Отказывать в обслуживании при нарушении правил</ListItem>
           </List>
         </Section>
 
         <Section>
-          <SectionTitle>6. Возврат товара</SectionTitle>
+          <SectionTitle>5. ПОРЯДОК РАБОТЫ С САЙТОМ</SectionTitle>
           <Text>
-            6.1. Покупатель вправе отказаться от товара в течение 7 дней с момента получения.
+            Для оформления заказа Пользователь должен заполнить форму заказа, указав 
+            необходимые данные и выбрав товары.
           </Text>
           <Text>
-            6.2. Возврат товара надлежащего качества возможен при сохранении его товарного вида и потребительских свойств.
+            После оформления заказа Продавец связывается с Пользователем для подтверждения 
+            заказа и уточнения деталей.
           </Text>
-        </Section>
-
-        <Section>
-          <SectionTitle>7. Ответственность сторон</SectionTitle>
           <Text>
-            7.1. За нарушение условий настоящего Соглашения стороны несут ответственность в соответствии с действующим законодательством Российской Федерации.
+            Оплата заказа производится в соответствии с выбранным способом оплаты.
           </Text>
         </Section>
 
         <Section>
-          <SectionTitle>8. Заключительные положения</SectionTitle>
+          <SectionTitle>6. ОТВЕТСТВЕННОСТЬ СТОРОН</SectionTitle>
           <Text>
-            8.1. Настоящее Соглашение вступает в силу с момента его акцепта Покупателем и действует до полного исполнения обязательств сторонами.
+            За нарушение условий настоящего Соглашения стороны несут ответственность 
+            в соответствии с действующим законодательством Российской Федерации.
           </Text>
           <Text>
-            8.2. Все споры, возникающие из настоящего Соглашения, разрешаются путем переговоров, а при невозможности достижения согласия – в судебном порядке.
+            Продавец не несет ответственности за ущерб, причиненный Пользователю в результате 
+            неправильного использования сайта.
+          </Text>
+        </Section>
+
+        <Section>
+          <SectionTitle>7. ИНТЕЛЛЕКТУАЛЬНАЯ СОБСТВЕННОСТЬ</SectionTitle>
+          <Text>
+            Все материалы, размещенные на сайте, включая тексты, изображения, дизайн, 
+            являются объектами интеллектуальной собственности Продавца.
+          </Text>
+          <Text>
+            Использование материалов сайта без разрешения Продавца запрещено.
+          </Text>
+        </Section>
+
+        <Section>
+          <SectionTitle>8. КОНФИДЕНЦИАЛЬНОСТЬ</SectionTitle>
+          <Text>
+            Продавец обязуется не разглашать персональные данные Пользователей третьим лицам, 
+            за исключением случаев, предусмотренных законодательством.
+          </Text>
+          <Text>
+            Обработка персональных данных осуществляется в соответствии с Политикой 
+            конфиденциальности.
+          </Text>
+        </Section>
+
+        <Section>
+          <SectionTitle>9. РАЗРЕШЕНИЕ СПОРОВ</SectionTitle>
+          <Text>
+            Все споры, возникающие из настоящего Соглашения, разрешаются путем переговоров 
+            между сторонами.
+          </Text>
+          <Text>
+            В случае невозможности разрешения спора путем переговоров, спор подлежит 
+            рассмотрению в судебном порядке.
+          </Text>
+        </Section>
+
+        <Section>
+          <SectionTitle>10. ЗАКЛЮЧИТЕЛЬНЫЕ ПОЛОЖЕНИЯ</SectionTitle>
+          <Text>
+            Настоящее Соглашение вступает в силу с момента его размещения на сайте и 
+            действует бессрочно.
+          </Text>
+          <Text>
+            Продавец оставляет за собой право изменять условия Соглашения. Изменения 
+            вступают в силу с момента их размещения на сайте.
+          </Text>
+          <Text>
+            Продолжение использования сайта после внесения изменений означает согласие 
+            Пользователя с новыми условиями.
+          </Text>
+        </Section>
+
+        <Section>
+          <SectionTitle>11. КОНТАКТНАЯ ИНФОРМАЦИЯ</SectionTitle>
+          <Text>
+            По всем вопросам, связанным с работой сайта и настоящим Соглашением, 
+            вы можете обращаться:
+          </Text>
+          <Text>
+            <strong>Email:</strong> southclub@mail.ru<br />
+            <strong>Телефон:</strong> +7 (903) 404-43-01<br />
+            <strong>Адрес:</strong> Россия, обл. Ростовская,  г. Ростов-на-Дону
+          </Text>
+        </Section>
+
+        <Section>
+          <Text>
+            <strong>Дата вступления в силу:</strong> 1 января 2025 года
           </Text>
         </Section>
       </Container>

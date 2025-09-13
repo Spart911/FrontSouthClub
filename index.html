@@ -2,27 +2,63 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/images/production/logo.png" />
+    <link rel="icon" type="image/png" href="/images/production/logo_SC.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>LUMNI - Создаем уют</title>
-    <meta name="description" content="LUMNI - Создаем уют. Современные светильники ручной работы из Ростова-на-Дону. Уникальный дизайн, качественные материалы, индивидуальный подход." />
-    <meta name="keywords" content="светильники, лампы, дизайн, интерьер, освещение, ручная работа, Ростов-на-Дону" />
-    <meta property="og:title" content="Lamp - современные светильники" />
-    <meta property="og:description" content="LUMNI - Создаем уют. Современные светильники ручной работы из Ростова-на-Дону." />
+    <title>SOUTH CLUB - Уличная одежда и аксессуары</title>
+    <meta name="description" content="SOUTH CLUB - Уличная одежда и аксессуары. Современная мода для активной жизни. Качественные материалы, уникальный дизайн, стильные решения для вашего гардероба." />
+    <meta name="keywords" content="уличная одежда, худи, футболки, куртки, мода, стиль, аксессуары, streetwear" />
+    
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://lumni-p5kk6a6g5-egors-projects-da0957dd.vercel.app" />
-    <meta property="og:image" content="/images/production/logo.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <script src="https://yookassa.ru/checkout-widget/v1/checkout-widget.js"></script>
+    <meta property="og:url" content="https://southclub.ru" />
+    <meta property="og:title" content="SOUTH CLUB - Уличная одежда и аксессуары" />
+    <meta property="og:description" content="SOUTH CLUB - Уличная одежда и аксессуары. Современная мода для активной жизни." />
+    <meta property="og:image" content="/images/production/logo_SC.png" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://southclub.ru" />
+    <meta property="twitter:title" content="SOUTH CLUB - Уличная одежда и аксессуары" />
+    <meta property="twitter:description" content="SOUTH CLUB - Уличная одежда и аксессуары. Современная мода для активной жизни." />
+    <meta property="twitter:image" content="/images/production/logo_SC.png" />
+    
+    <!-- Additional Meta Tags -->
+    <meta name="author" content="SOUTH CLUB" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#1e3ea8" />
+    
+
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/fonts/heathergreen.otf" as="font" type="font/otf" crossorigin>
+    <link rel="preload" href="/images/production/logo_SC.png" as="image">
+    
+    <!-- DNS prefetch for external resources -->
+    <link rel="dns-prefetch" href="//yookassa.ru">
+    <link rel="dns-prefetch" href="//localhost:8000">
+    
+
+    <!-- YooKassa for payments - load async -->
+    <script src="https://yookassa.ru/checkout-widget/v1/checkout-widget.js" async></script>
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "SOUTH CLUB",
+      "url": "https://southclub.ru",
+      "logo": "https://southclub.ru/images/production/logo_SC.png",
+      "description": "Уличная одежда и аксессуары",
+      "sameAs": [
+        "https://instagram.com/southclub",
+        "https://vk.com/southclub"
+      ]
+    }
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root" style="opacity:0; transition: opacity 0.01s ease"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

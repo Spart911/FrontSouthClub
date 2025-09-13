@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { CartModal } from './CartModal';
+import { cartService } from '../services/cartService';
+import { scrollToSection, scrollToSectionFromOtherPage } from '../utils/scrollToSection';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -41,10 +44,34 @@ const CloseButton = styled.button`
   right: 1rem;
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 4rem;
+  font-family: 'HeatherGreen', 'Helvetica', sans-serif;
+  font-weight: 700;
   cursor: pointer;
   padding: 0.5rem;
   color: #000;
+  outline: none;
+  transition: all 0.3s ease;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  
+  &:hover {
+    background: #f0f0f0;
+    transform: scale(1.1);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: none;
+  }
 `;
 
 const MenuList = styled.ul`
@@ -72,38 +99,53 @@ const MenuLink = styled(Link)`
 export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
+  const isLegalPage = ['/offer', '/privacy', '/terms', '/privacy-policy'].includes(location.pathname);
+  const isProductPage = location.pathname.startsWith('/product/');
 
-  const handleNavigation = (path: string) => {
-    if (location.pathname === '/checkout') {
-      const event = new CustomEvent('navigationAttempt', { detail: { path } });
-      window.dispatchEvent(event);
+  // Update cart count when component mounts or when cart changes
+  useEffect(() => {
+    const updateCartCount = () => {
+      setCartCount(cartService.getCartItemsCount());
+    };
+
+    updateCartCount();
+
+    // Listen for cart changes
+    const handleStorageChange = () => {
+      updateCartCount();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also listen for custom cart update events
+    window.addEventListener('cartUpdated', updateCartCount);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('cartUpdated', updateCartCount);
+    };
+  }, []);
+
+
+  const handleScrollToSection = (sectionId: string) => {
+    onClose(); // Close menu first
+    
+    if (location.pathname !== '/') {
+      navigate('/');
+      scrollToSectionFromOtherPage(sectionId);
     } else {
-      navigate(path);
+      // Even on home page, wait a bit for lazy components to load
+      setTimeout(() => {
+        scrollToSection(sectionId).catch(console.warn);
+      }, 100);
     }
-    onClose();
   };
 
   const handleShopClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (location.pathname === '/checkout') {
-      const event = new CustomEvent('navigationAttempt', { detail: { path: '/' } });
-      window.dispatchEvent(event);
-    } else {
-      navigate('/');
-      setTimeout(() => {
-        const productsSection = document.querySelector('.product-section');
-        if (productsSection) {
-          const offset = 80; // Отступ в пикселях
-          const elementPosition = productsSection.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - offset;
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-          });
-        }
-      }, 100);
-    }
-    onClose();
+    handleScrollToSection('products');
   };
 
   return (
@@ -112,23 +154,41 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
       <MenuContainer $isOpen={isOpen}>
         <CloseButton onClick={onClose}>×</CloseButton>
         <MenuList>
+          {(isLegalPage || isProductPage) && (
+            <MenuItem>
+              <MenuLink to="/" onClick={(e) => {
+                e.preventDefault();
+                navigate('/');
+              }}>Главная</MenuLink>
+            </MenuItem>
+          )}
           <MenuItem>
-            <MenuLink to="/" onClick={handleShopClick}>Магазин</MenuLink>
+            <MenuLink to="/" onClick={handleShopClick}>Товары</MenuLink>
           </MenuItem>
           <MenuItem>
-            <MenuLink to="/made" onClick={(e) => {
+            <MenuLink to="/" onClick={(e) => {
               e.preventDefault();
-              handleNavigation('/made');
-            }}>Производство</MenuLink>
+              handleScrollToSection('community');
+            }}>Комьюнити</MenuLink>
           </MenuItem>
           <MenuItem>
-            <MenuLink to="/about" onClick={(e) => {
+            <MenuLink to="/" onClick={(e) => {
               e.preventDefault();
-              handleNavigation('/about');
-            }}>О нас</MenuLink>
+              handleScrollToSection('feedback');
+            }}>Обратная связь</MenuLink>
+          </MenuItem>
+          <MenuItem>
+            <MenuLink to="#" onClick={(e) => {
+              e.preventDefault();
+              setIsCartOpen(true);
+            }}>Корзина ({cartCount})</MenuLink>
           </MenuItem>
         </MenuList>
       </MenuContainer>
+      <CartModal 
+        isOpen={isCartOpen} 
+        onClose={() => setIsCartOpen(false)} 
+      />
     </>
   );
 }; 

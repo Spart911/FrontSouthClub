@@ -18,9 +18,13 @@ export default defineConfig({
   server: {
     host: true, // Слушать все сетевые интерфейсы
     port: 5173,
-    strictPort: false, // Позволяет использовать другой порт, если указанный занят
+    strictPort: false, // Позволяем использовать другие порты
     open: true, // Автоматически открывать браузер
     cors: true, // Включаем CORS
+    hmr: {
+      port: 5173,
+      host: 'localhost'
+    }
   },
   build: {
     target: 'es2015',

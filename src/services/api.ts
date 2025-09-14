@@ -311,7 +311,7 @@ async uploadProductPhoto(productId: string, photo: File, priority: number = 0): 
   formData.append('photo', photo);
 
   // Убираем лишний слеш перед query параметрами
-  const endpoint = `/photos/actions/upload-photo/?product_id=${productId}&priority=${priority}`;
+  const endpoint = `/photos/actions/upload-photo/`;
 
   return this.request<ProductPhoto>(endpoint, {
     method: 'POST',

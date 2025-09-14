@@ -21,8 +21,18 @@ const setCachedData = (key: string, data: any) => {
 export const buildFileUrl = (filePath: string): string => {
   if (!filePath) return filePath;
   if (/^https?:\/\//i.test(filePath)) return filePath;
+  
   try {
     const origin = new URL(API_BASE_URL).origin;
+    
+    // Если путь начинается с /app/uploads/, заменяем на правильный путь
+    // Файлы находятся в /home/nyuroprint/Backend_SOUTH_CLUB/uploads на сервере
+    // Сервер должен обслуживать файлы по пути /uploads/ для доступа через веб
+    if (filePath.startsWith('/app/uploads/')) {
+      const correctedPath = filePath.replace('/app/uploads/', 'api/v1/uploads/');
+      return `${origin}${correctedPath}`;
+    }
+    
     return `${origin}${filePath}`;
   } catch {
     return filePath;

@@ -22,7 +22,11 @@ const PhotoStripWrapper = styled.div<{ $dragOffset: number }>`
   user-select: none;
   transition: transform 0.6s ease;
   transform: translateX(${({ $dragOffset }) => $dragOffset}px);
+  @media (max-width: 768px) {
+    gap: 20px;
+  }
 `;
+
 
 const PhotoPanel = styled.div<{ $isActive: boolean; $filterId?: string }>`
   width: 1274px;
@@ -33,8 +37,10 @@ const PhotoPanel = styled.div<{ $isActive: boolean; $filterId?: string }>`
   cursor: pointer;
 
   @media (max-width: 768px) {
-    width: 849px;
-    height: 429px;
+    // width: 849px;
+    // height: 429px;
+    width: 320px;
+    height: 200px;
   }
 
   ${({ $isActive, $filterId }) =>

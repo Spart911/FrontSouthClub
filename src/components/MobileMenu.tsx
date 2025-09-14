@@ -27,7 +27,7 @@ const MenuContainer = styled.div<{ $isOpen: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
-  width: 80%;
+  width: 50%;
   max-width: 300px;
   height: 100vh;
   background-color: white;
@@ -77,7 +77,7 @@ const CloseButton = styled.button`
 const MenuList = styled.ul`
   list-style: none;
   padding: 0;
-  margin: 2rem 0 0 0;
+  // margin: 2rem 0 0 0;
 `;
 
 const MenuItem = styled.li`
@@ -86,8 +86,9 @@ const MenuItem = styled.li`
 
 const MenuLink = styled(Link)`
   font-family: var(--font-buch), "Helvetica", sans-serif;
-  font-size: 1.2rem;
+  font-size: 2rem;
   color: #000;
+  letter-spacing: 1px;
   text-decoration: none;
   transition: color 0.3s ease;
 

@@ -78,8 +78,8 @@ const AppContent = () => {
           <>
             <Logo />
             <PhotoStrip />
-            <LazyLoad height="200px">
-              <Suspense fallback={<div style={{ height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Загрузка...</div>}>
+            <LazyLoad height="20px">
+              <Suspense fallback={<div style={{ height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Загрузка...</div>}>
                 <RunningTape />
               </Suspense>
             </LazyLoad>

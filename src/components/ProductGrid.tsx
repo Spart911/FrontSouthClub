@@ -7,6 +7,8 @@ const SectionWrapper = styled.section`
   padding: 40px 20px;
   background: #ffffff;
   scroll-margin-top: 50px;
+  @media (max-width: 768px) {
+  padding-top: 0px;
 `;
 
 const Title = styled.h2`
@@ -34,8 +36,9 @@ const Grid = styled.div`
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @media (max-width: 640px) {
-    grid-template-columns: 1fr;
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 44px 38px;
   }
 `;
 
@@ -115,7 +118,7 @@ const CardWrapper = styled.div<{ $isComingSoon: boolean; $hasHover: boolean }>`
           font-size: 22vw;
         }
         @media (max-width: 580px) {
-          font-size: 44vw;
+          font-size: 25vw;
         }
       }
 
@@ -160,6 +163,13 @@ const InfoBlock = styled.div`
   border-radius: 8px;
   text-align: center;
   z-index: 5;
+
+  @media (max-width: 768px) {
+    bottom: -38px;
+        width: 90%;
+        padding: 1px 0px;
+
+  }
 `;
 
 const EmptyBlock = styled(InfoBlock)`
@@ -176,12 +186,21 @@ const ProductName = styled.div`
   border-radius: 18px;
   display: inline-block;
     padding: 0px 12px;
+    @media (max-width: 768px) {
+        font-size: 1.4rem;
+        letter-spacing: 0.1rem;
+        line-height: 1.1;
+        padding: 4px 12px;
+    }
 `;
 
 const ProductPrice = styled.div`
   font-weight: 500;
   font-size: 1.7rem;
   color: #000;
+  @media (max-width: 768px) {
+    font-size: 1.4rem;
+  }
 `;
 
 export const ProductGrid: React.FC = () => {

@@ -297,28 +297,27 @@ class ApiService {
     });
   }
 
-  // Product Photos API
-  async uploadProductPhoto(productId: string, photo: File, priority: number = 0): Promise<ProductPhoto> {
-    console.log('Uploading photo:', {
-      productId,
-      fileName: photo.name,
-      fileSize: photo.size,
-      fileType: photo.type,
-      priority
-    });
+// Product Photos API
+async uploadProductPhoto(productId: string, photo: File, priority: number = 0): Promise<ProductPhoto> {
+  console.log('Uploading photo:', {
+    productId,
+    fileName: photo.name,
+    fileSize: photo.size,
+    fileType: photo.type,
+    priority
+  });
 
-    const formData = new FormData();
-    formData.append('photo', photo);
+  const formData = new FormData();
+  formData.append('photo', photo);
 
-    // Согласно документации, priority передается как query parameter
-    // Передаем только endpoint, baseUrl добавляется в методе request
-    const endpoint = `/photos/upload-photo/?product_id=${productId}&priority=${priority}`;
+  // Убираем лишний слеш перед query параметрами
+  const endpoint = `/photos/upload-photo?product_id=${productId}&priority=${priority}`;
 
-    return this.request<ProductPhoto>(endpoint, {
-      method: 'POST',
-      body: formData,
-    });
-  }
+  return this.request<ProductPhoto>(endpoint, {
+    method: 'POST',
+    body: formData,
+  });
+}
 
   async getProductPhotos(productId: string): Promise<ProductPhoto[]> {
     const cacheKey = `product_photos_${productId}`;

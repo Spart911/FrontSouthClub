@@ -418,38 +418,37 @@ async uploadProductPhoto(productId: string, photo: File, priority: number = 0): 
       method: 'POST',
     });
   }
+// Auth API
+async adminLogin(credentials: AdminLogin): Promise<AdminLoginResponse> {
+  const response = await this.request<AdminLoginResponse>('/auth/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json', // Меняем на JSON
+    },
+    body: JSON.stringify({
+      username: credentials.username,
+      password: credentials.password,
+      // grant_type можно убрать, если бэк его не использует
+    }),
+  });
 
-  // Auth API
-  async adminLogin(credentials: AdminLogin): Promise<AdminLoginResponse> {
-    const response = await this.request<AdminLoginResponse>('/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        username: credentials.username,
-        password: credentials.password,
-        grant_type: 'password',
-      }),
-    });
+  this.token = response.access_token;
+  localStorage.setItem('admin_token', this.token);
+  return response;
+}
 
-    this.token = response.access_token;
-    localStorage.setItem('admin_token', this.token);
-    return response;
-  }
+logout(): void {
+  this.token = null;
+  localStorage.removeItem('admin_token');
+}
 
-  logout(): void {
-    this.token = null;
-    localStorage.removeItem('admin_token');
-  }
+isAuthenticated(): boolean {
+  return !!this.token;
+}
 
-  isAuthenticated(): boolean {
-    return !!this.token;
-  }
-
-  getToken(): string | null {
-    return this.token;
-  }
+getToken(): string | null {
+  return this.token;
+}
 
   // Orders API
   async createOrder(order: OrderCreate): Promise<Order> {

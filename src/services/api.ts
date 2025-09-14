@@ -27,9 +27,10 @@ export const buildFileUrl = (filePath: string): string => {
     
     // Если путь начинается с /app/uploads/, заменяем на правильный путь
     // Файлы находятся в /home/nyuroprint/Backend_SOUTH_CLUB/uploads на сервере
-    // Сервер должен обслуживать файлы по пути /uploads/ для доступа через веб
+    // Сервер должен обслуживать файлы по пути /api/v1/photos/ для доступа через веб
     if (filePath.startsWith('/app/uploads/')) {
-      const correctedPath = filePath.replace('/app/uploads/', '/api/v1/photos/');
+      // Убираем /app/uploads/products/ и заменяем на /api/v1/photos/
+      const correctedPath = filePath.replace('/app/uploads/products/', '/api/v1/photos/');
       return `${origin}${correctedPath}`;
     }
     

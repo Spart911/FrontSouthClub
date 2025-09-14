@@ -17,8 +17,8 @@ https://southclub.ru/app/uploads/products/c0d0c3a9-d6d3-4442-b409-7043ca557293.j
 3. **buildFileUrl результат** = `https://southclub.ru` + `/app/uploads/products/...` = `https://southclub.ru/app/uploads/products/...`
 
 ### Правильный URL должен быть:
-- `https://southclub.ru/uploads/products/...` (файлы находятся в `/home/nyuroprint/Backend_SOUTH_CLUB/uploads` на сервере)
-- Сервер должен обслуживать файлы по пути `/uploads/` для доступа через веб
+- `https://southclub.ru/api/v1/photos/...` (файлы находятся в `/home/nyuroprint/Backend_SOUTH_CLUB/uploads` на сервере)
+- Сервер должен обслуживать файлы по пути `/api/v1/photos/` для доступа через веб
 
 ## Исправление
 
@@ -47,7 +47,8 @@ export const buildFileUrl = (filePath: string): string => {
     
     // Если путь начинается с /app/uploads/, заменяем на правильный путь
     if (filePath.startsWith('/app/uploads/')) {
-      const correctedPath = filePath.replace('/app/uploads/', '/uploads/');
+      // Убираем /app/uploads/products/ и заменяем на /api/v1/photos/
+      const correctedPath = filePath.replace('/app/uploads/products/', '/api/v1/photos/');
       return `${origin}${correctedPath}`;
     }
     
@@ -62,7 +63,7 @@ export const buildFileUrl = (filePath: string): string => {
 
 Теперь URL формируется правильно:
 - **Было**: `https://southclub.ru/app/uploads/products/...`
-- **Стало**: `https://southclub.ru/uploads/products/...`
+- **Стало**: `https://southclub.ru/api/v1/photos/...`
 
 ## Где используется
 
@@ -80,5 +81,5 @@ export const buildFileUrl = (filePath: string): string => {
 1. Откройте сайт
 2. Проверьте, что изображения товаров загружаются
 3. Откройте Network tab в DevTools
-4. Убедитесь, что запросы идут к правильному URL: `https://southclub.ru/uploads/products/...`
+4. Убедитесь, что запросы идут к правильному URL: `https://southclub.ru/api/v1/photos/...`
 5. Проверьте, что изображения отображаются корректно

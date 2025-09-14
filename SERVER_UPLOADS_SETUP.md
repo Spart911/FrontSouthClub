@@ -3,19 +3,19 @@
 ## Проблема
 Фронтенд ожидает, что файлы будут доступны по URL:
 ```
-https://southclub.ru/uploads/products/...
+https://southclub.ru/api/v1/photos/...
 ```
 
 Но файлы находятся в файловой системе сервера по пути:
 ```
-/home/nyuroprint/Backend_SOUTH_CLUB/uploads/
+/home/nyuroprint/Backend_SOUTH_CLUB/uploads/products/
 ```
 
 ## Решение
 
 ### 1. Настройка веб-сервера (Nginx/Apache)
 
-Нужно настроить веб-сервер так, чтобы он обслуживал файлы из папки `/home/nyuroprint/Backend_SOUTH_CLUB/uploads/` по URL `/uploads/`.
+Нужно настроить веб-сервер так, чтобы он обслуживал файлы из папки `/home/nyuroprint/Backend_SOUTH_CLUB/uploads/products/` по URL `/api/v1/photos/`.
 
 #### Для Nginx:
 ```nginx
@@ -24,8 +24,8 @@ server {
     server_name southclub.ru;
     
     # Обслуживание статических файлов
-    location /uploads/ {
-        alias /home/nyuroprint/Backend_SOUTH_CLUB/uploads/;
+    location /api/v1/photos/ {
+        alias /home/nyuroprint/Backend_SOUTH_CLUB/uploads/products/;
         expires 1y;
         add_header Cache-Control "public, immutable";
     }
@@ -40,8 +40,8 @@ server {
     ServerName southclub.ru
     
     # Обслуживание статических файлов
-    Alias /uploads/ /home/nyuroprint/Backend_SOUTH_CLUB/uploads/
-    <Directory "/home/nyuroprint/Backend_SOUTH_CLUB/uploads/">
+    Alias /api/v1/photos/ /home/nyuroprint/Backend_SOUTH_CLUB/uploads/products/
+    <Directory "/home/nyuroprint/Backend_SOUTH_CLUB/uploads/products/">
         Options -Indexes
         AllowOverride None
         Require all granted

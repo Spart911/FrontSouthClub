@@ -159,6 +159,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
             <MenuItem>
               <MenuLink to="/" onClick={(e) => {
                 e.preventDefault();
+                onClose(); // Закрываем меню
                 navigate('/');
               }}>Главная</MenuLink>
             </MenuItem>

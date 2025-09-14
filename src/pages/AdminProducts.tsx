@@ -590,20 +590,26 @@ const AdminProducts: React.FC = () => {
         productId = newProduct.id;
       }
 
-      // Загружаем фотографии и затем принудительно устанавливаем нужный приоритет,
-      // если бэк его игнорирует на этапе загрузки
+      // Загружаем фотографии согласно новому API
+      const uploadErrors: string[] = [];
       for (const photoUpload of photoUploads) {
         try {
-          const created = await apiService.uploadProductPhoto(productId, photoUpload.file, {
-            name: photoUpload.name,
-            priority: photoUpload.priority
-          });
-          if (created && created.id != null && created.priority !== photoUpload.priority) {
-            await apiService.updateProductPhoto(created.id, { priority: photoUpload.priority });
-          }
+          console.log('Загружаем фото:', photoUpload.name, 'для товара:', productId, 'с приоритетом:', photoUpload.priority);
+          
+          // Согласно новой документации, priority передается как query parameter
+          const created = await apiService.uploadProductPhoto(productId, photoUpload.file, photoUpload.priority);
+          console.log('Фото загружено:', created);
+          
         } catch (uploadErr) {
-          console.error('Ошибка загрузки фото:', uploadErr);
+          const errorMsg = `Ошибка загрузки фото "${photoUpload.name}": ${uploadErr instanceof Error ? uploadErr.message : 'Неизвестная ошибка'}`;
+          console.error(errorMsg, uploadErr);
+          uploadErrors.push(errorMsg);
         }
+      }
+      
+      // Показываем ошибки загрузки фотографий, если они есть
+      if (uploadErrors.length > 0) {
+        setError(`Товар создан, но возникли ошибки при загрузке фотографий:\n${uploadErrors.join('\n')}`);
       }
       
       setIsModalOpen(false);

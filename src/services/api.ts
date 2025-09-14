@@ -294,34 +294,37 @@ class ApiService {
   }
 
   // Product Photos API
-  async uploadProductPhoto(productId: string, photo: File, extra?: { name: string; priority: number }): Promise<ProductPhoto> {
-    const formData = new FormData();
-    formData.append('photo', photo);
-    
-    if (extra) {
-      formData.append('name', extra.name);
-      formData.append('priority', extra.priority.toString());
-    }
-
-    const url = `${this.baseUrl}/photos/upload/?product_id=${productId}`;
-    const headers: HeadersInit = {};
-    
-    if (this.token) {
-      headers.Authorization = `Bearer ${this.token}`;
-    }
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: formData,
+  async uploadProductPhoto(productId: string, photo: File, priority: number = 0): Promise<ProductPhoto> {
+    console.log('Uploading photo:', {
+      productId,
+      fileName: photo.name,
+      fileSize: photo.size,
+      fileType: photo.type,
+      priority
     });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+    const formData = new FormData();
+    formData.append('photo', photo);
+
+    // Согласно документации, priority передается как query parameter
+    const url = `${this.baseUrl}/photos/upload/?product_id=${productId}&priority=${priority}`;
+
+    return this.request<ProductPhoto>(url, {
+      method: 'POST',
+      body: formData,
+    });
+  }
+
+  async getProductPhotos(productId: string): Promise<ProductPhoto[]> {
+    const cacheKey = `product_photos_${productId}`;
+    const cached = getCachedData(cacheKey);
+    if (cached) {
+      return cached;
     }
 
-    return response.json();
+    const result = await this.request<ProductPhoto[]>(`/photos/product/${productId}`);
+    setCachedData(cacheKey, result);
+    return result;
   }
 
   async updateProductPhoto(photoId: string, data: { name?: string; priority?: number }): Promise<ProductPhoto> {

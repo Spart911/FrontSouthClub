@@ -407,15 +407,18 @@ async uploadProductPhoto(productId: string, photo: File, priority: number = 0): 
 async adminLogin(credentials: AdminLogin): Promise<AdminLoginResponse> {
   const url = `${this.baseUrl}/auth/login`;
   
+  // Попробуем использовать form-data формат, как ожидает OAuth2
+  const formData = new URLSearchParams();
+  formData.append('username', credentials.username);
+  formData.append('password', credentials.password);
+  formData.append('grant_type', 'password');
+  
   const response = await fetch(url, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded',
     },
-    body: JSON.stringify({
-      username: credentials.username,
-      password: credentials.password,
-    }),
+    body: formData,
   });
 
   if (!response.ok) {

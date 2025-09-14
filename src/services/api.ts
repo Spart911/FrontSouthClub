@@ -312,7 +312,7 @@ class ApiService {
 
     // Согласно документации, priority передается как query parameter
     // Передаем только endpoint, baseUrl добавляется в методе request
-    const endpoint = `/photos/upload/?product_id=${productId}&priority=${priority}`;
+    const endpoint = `/photos/upload-photo/?product_id=${productId}&priority=${priority}`;
 
     return this.request<ProductPhoto>(endpoint, {
       method: 'POST',

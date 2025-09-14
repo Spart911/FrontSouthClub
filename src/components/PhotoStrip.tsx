@@ -29,8 +29,8 @@ const PhotoStripWrapper = styled.div<{ $dragOffset: number }>`
 
 
 const PhotoPanel = styled.div<{ $isActive: boolean; $filterId?: string }>`
-  width: 1274px;
-  height: 644px;
+  width: 849px;
+  height: 429px;
   border-radius: 34px;
   overflow: hidden;
   transition: all 0.6s ease;

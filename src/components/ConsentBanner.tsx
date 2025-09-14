@@ -99,9 +99,6 @@ export const ConsentBanner: React.FC<ConsentBannerProps> = ({
         <Button $variant="secondary" onClick={onSettings}>
           Подробнее
         </Button>
-        <Button $variant="secondary" onClick={onDecline}>
-          Отклонить
-        </Button>
         <Button $variant="primary" onClick={onAccept}>
           Принять все
         </Button>

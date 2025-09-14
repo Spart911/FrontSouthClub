@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { apiService, type Product, buildFileUrl, getSizeLabel } from '../services/api';
 import { cartService } from '../services/cartService';
 
@@ -477,7 +477,7 @@ const RecommendedGrid = styled.div`
     grid-template-columns: 1fr;
   }
 `;
-const RecommendedCard = styled.a`
+const RecommendedCard = styled.a<{ $isComingSoon: boolean }>`
   position: relative;
   width: 100%;
   max-width: none;
@@ -490,6 +490,45 @@ const RecommendedCard = styled.a`
   overflow: visible;
   text-decoration: none;
   color: inherit;
+  cursor: ${({ $isComingSoon }) => $isComingSoon ? 'default' : 'pointer'};
+
+  ${({ $isComingSoon }) =>
+    $isComingSoon &&
+    css`
+      &::before {
+        content: '';
+        position: absolute;
+        top: 47%;
+        left: 0;
+        width: 100%;
+        height: 24%;
+        background: #1e3ea8;
+        transform: translateY(-50%);
+        z-index: 2;
+      }
+
+      &::after {
+        content: 'SOON';
+        position: absolute;
+        top: 35%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-weight: 900;
+        font-size: 10vw; 
+        text-align: center;
+        background: linear-gradient(to bottom, #1e3ea8 50%, white 50%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        z-index: 3;
+
+        @media (max-width: 1160px) {
+          font-size: 15vw;
+        }
+        @media (max-width: 870px) {
+          font-size: 22vw;
+        }
+      }
+    `}
 `;
 
 const RecommendedImageWrap = styled.div`
@@ -916,16 +955,28 @@ const ProductPage: React.FC = () => {
             <RecommendedTitle>Предложенные товары</RecommendedTitle>
             <RecommendedGrid>
               {recommended.map((p) => {
+                const isComingSoon = !!(p as any).soon;
                 const preview = p.photos && p.photos.length > 0 ? buildFileUrl((p.photos[0]).file_path) : '/images/production/logo.png';
                 return (
-                  <RecommendedCard key={p.id} href={`/product/${p.id}`}>
+                  <RecommendedCard 
+                    key={p.id} 
+                    href={isComingSoon ? '#' : `/product/${p.id}`}
+                    $isComingSoon={isComingSoon}
+                    onClick={(e) => {
+                      if (isComingSoon) {
+                        e.preventDefault();
+                      }
+                    }}
+                  >
                     <RecommendedImageWrap>
                       <img src={preview} alt={p.name} />
                     </RecommendedImageWrap>
-                    <RecommendedInfo>
-                      <RecommendedName>{p.name}</RecommendedName>
-                      <RecommendedPrice>{p.price} RUB</RecommendedPrice>
-                    </RecommendedInfo>
+                    {!isComingSoon && (
+                      <RecommendedInfo>
+                        <RecommendedName>{p.name}</RecommendedName>
+                        <RecommendedPrice>{p.price} RUB</RecommendedPrice>
+                      </RecommendedInfo>
+                    )}
                   </RecommendedCard>
                 );
               })}

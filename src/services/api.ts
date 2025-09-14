@@ -302,13 +302,15 @@ async uploadProductPhoto(productId: string, photo: File, priority: number = 0): 
   const formData = new FormData();
   formData.append('photo', photo);
 
-  const endpoint = `${API_BASE_URL}/photos/upload-photo?product_id=${productId}&priority=${priority}`;
+  const endpoint = `/photos/upload-photo?product_id=${productId}&priority=${priority}`;
 
   return this.request<ProductPhoto>(endpoint, {
     method: 'POST',
     body: formData,
   });
 }
+
+
 
   async getProductPhotos(productId: string): Promise<ProductPhoto[]> {
     const cacheKey = `product_photos_${productId}`;

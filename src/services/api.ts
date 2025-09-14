@@ -215,9 +215,13 @@ class ApiService {
     const url = `${this.baseUrl}${endpoint}`;
     
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
       ...(options.headers as Record<string, string>),
     };
+
+    // Only set Content-Type for JSON requests, not for FormData
+    if (!(options.body instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+    }
 
     if (this.token) {
       headers.Authorization = `Bearer ${this.token}`;
@@ -307,9 +311,10 @@ class ApiService {
     formData.append('photo', photo);
 
     // Согласно документации, priority передается как query parameter
-    const url = `${this.baseUrl}/photos/upload/?product_id=${productId}&priority=${priority}`;
+    // Передаем только endpoint, baseUrl добавляется в методе request
+    const endpoint = `/photos/upload/?product_id=${productId}&priority=${priority}`;
 
-    return this.request<ProductPhoto>(url, {
+    return this.request<ProductPhoto>(endpoint, {
       method: 'POST',
       body: formData,
     });

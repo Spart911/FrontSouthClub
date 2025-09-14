@@ -1,5 +1,5 @@
 // API service for SOUTH CLUB backend
-const API_BASE_URL = 'http://localhost:8000/api/v1';
+const API_BASE_URL = 'https://southclub.ru/api/api/v1';
 
 // Simple cache for API responses
 const cache = new Map<string, { data: any; timestamp: number }>();

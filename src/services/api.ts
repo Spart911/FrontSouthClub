@@ -365,25 +365,10 @@ async uploadProductPhoto(productId: string, photo: File, priority: number = 0): 
       formData.append('order_number', String(extra.order_number));
     }
 
-    const url = `${this.baseUrl}/slider/upload`;
-    const headers: HeadersInit = {};
-    
-    if (this.token) {
-      headers.Authorization = `Bearer ${this.token}`;
-    }
-
-    const response = await fetch(url, {
+    return this.request<SliderPhoto>('/slider/upload', {
       method: 'POST',
-      headers,
       body: formData,
     });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
-    }
-
-    return response.json();
   }
 
   async updateSliderPhoto(photoId: string, data: { name?: string; order_number?: number }): Promise<SliderPhoto> {
@@ -420,21 +405,30 @@ async uploadProductPhoto(productId: string, photo: File, priority: number = 0): 
   }
 // Auth API
 async adminLogin(credentials: AdminLogin): Promise<AdminLoginResponse> {
-  const response = await this.request<AdminLoginResponse>('/auth/login', {
+  const url = `${this.baseUrl}/auth/login`;
+  
+  const response = await fetch(url, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json', // Меняем на JSON
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       username: credentials.username,
       password: credentials.password,
-      // grant_type можно убрать, если бэк его не использует
     }),
   });
 
-  this.token = response.access_token;
-  localStorage.setItem('admin_token', this.token);
-  return response;
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+  }
+
+  const result = await response.json();
+  this.token = result.access_token;
+  if (this.token) {
+    localStorage.setItem('admin_token', this.token);
+  }
+  return result;
 }
 
 logout(): void {

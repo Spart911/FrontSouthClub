@@ -25,13 +25,18 @@ export const buildFileUrl = (filePath: string): string => {
   try {
     const origin = new URL(API_BASE_URL).origin;
     
-    // Если путь начинается с /app/uploads/, заменяем на правильный путь
-    // Файлы находятся в /home/nyuroprint/Backend_SOUTH_CLUB/uploads на сервере
-    // Сервер должен обслуживать файлы по пути /api/v1/photos/ для доступа через веб
-    if (filePath.startsWith('/app/uploads/')) {
-      // Убираем /app/uploads/products/ и заменяем на /api/v1/photos/
-      const correctedPath = filePath.replace('/app/uploads/products/', '/api/v1/photos/');
-      return `${origin}${correctedPath}`;
+    // Если путь содержит /app/uploads/products/, это путь из Docker контейнера
+    // Файлы находятся в /home/nyuroprint/Backend_SOUTH_CLUB/uploads/products/ на сервере
+    // Обращаемся напрямую к файлам без API запросов
+    if (filePath.includes('/app/uploads/products/')) {
+      // Извлекаем только название файла из полного пути
+      const fileName = filePath.split('/').pop();
+      return `${origin}/uploads/products/${fileName}`;
+    }
+    
+    // Если путь уже содержит /uploads/products/, используем как есть
+    if (filePath.startsWith('/uploads/products/')) {
+      return `${origin}${filePath}`;
     }
     
     return `${origin}${filePath}`;

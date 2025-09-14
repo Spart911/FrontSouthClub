@@ -45,11 +45,11 @@ export const buildFileUrl = (filePath: string): string => {
   try {
     const origin = new URL(API_BASE_URL).origin;
     
-    // Если путь начинается с /app/uploads/, заменяем на правильный путь
-    if (filePath.startsWith('/app/uploads/')) {
-      // Убираем /app/uploads/products/ и заменяем на /api/v1/photos/
-      const correctedPath = filePath.replace('/app/uploads/products/', '/api/v1/photos/');
-      return `${origin}${correctedPath}`;
+    // Если путь начинается с /app/uploads/, извлекаем только название файла
+    if (filePath.startsWith('/app/uploads/products/')) {
+      // Извлекаем только название файла из полного пути
+      const fileName = filePath.split('/').pop();
+      return `${origin}/api/v1/photos/${fileName}`;
     }
     
     return `${origin}${filePath}`;

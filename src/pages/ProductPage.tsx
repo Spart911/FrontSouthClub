@@ -83,7 +83,7 @@ const AddToCartButton = styled.button`
   border: 10px solid rgb(255, 255, 255);
   padding: 5px 0px;
   font-family: 'HeatherGreen', 'Helvetica', sans-serif;
-  font-size: 5vw;
+  font-size: 4vw;
   
   font-weight: 600;
   cursor: pointer;

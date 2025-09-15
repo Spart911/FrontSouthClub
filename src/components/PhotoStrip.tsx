@@ -199,6 +199,7 @@ export const PhotoStrip: React.FC = () => {
             src={photos[currentIndex]} 
             alt="" 
             loading="eager"
+            fetchpriority="high"
             decoding="async"
           />
         </PhotoPanel>

@@ -27,18 +27,22 @@ const Grid = styled.div`
   grid-template-columns: repeat(4, 1fr);
   gap: 40px;
   justify-items: stretch;
+  min-height: 600px; /* Предотвращаем CLS */
 
   @media (max-width: 1440px) {
     grid-template-columns: repeat(3, 1fr);
+    min-height: 500px;
   }
 
   @media (max-width: 1024px) {
     grid-template-columns: repeat(2, 1fr);
+    min-height: 400px;
   }
 
   @media (max-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
     gap: 44px 38px;
+    min-height: 350px;
   }
 `;
 

@@ -873,7 +873,7 @@ const ProductPage: React.FC = () => {
           <ImageSection>
             <MainImage onClick={handleMainImageClick}>
               <img 
-                src={images[selectedImage] ? buildFileUrl(images[selectedImage].file_path) : '/main_images/1.webp'} 
+                src={images[selectedImage] ? buildFileUrl(images[selectedImage].file_path) : '/images/production/1.webp'} 
                 alt={product.name}
                 decoding="async"
                 loading="eager"

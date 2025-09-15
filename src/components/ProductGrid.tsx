@@ -126,8 +126,8 @@ const CardWrapper = styled.div<{ $isComingSoon: boolean; $hasHover: boolean }>`
           font-size: 10vw;
         }
         @media (max-width: 1024px) {
-          top: 39%;
-          font-size: 16vw;
+          top: 38.5%;
+          font-size: 11vw;
         }
       }
 

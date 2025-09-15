@@ -16,7 +16,7 @@ const Title = styled.h2`
 `;
 
 const Container = styled.div`
-  width: 100%;
+  width: 43%;
   max-width: 1000px;
   margin: 0 auto;
   position: relative;

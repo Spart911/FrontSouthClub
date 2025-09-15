@@ -196,11 +196,11 @@ server {
     # Content Security Policy (CSP)
     add_header Content-Security-Policy "
       default-src 'self';
-      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://yookassa.ru;
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://yookassa.ru https://static.yoomoney.ru;
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
       font-src 'self' https://fonts.gstatic.com data:;
       img-src 'self' data: https: blob:;
-      connect-src 'self' https://southclub.ru https://yookassa.ru;
+      connect-src 'self' https://southclub.ru https://yookassa.ru https://static.yoomoney.ru;
       media-src 'self';
       object-src 'none';
       base-uri 'self';

@@ -63,11 +63,13 @@
     
     <!-- DNS prefetch for external resources -->
     <link rel="dns-prefetch" href="//yookassa.ru">
+    <link rel="dns-prefetch" href="//static.yoomoney.ru">
     <link rel="dns-prefetch" href="//southclub.ru">
     <link rel="dns-prefetch" href="//fonts.googleapis.com">
     
     <!-- Preconnect to external domains -->
     <link rel="preconnect" href="https://yookassa.ru" crossorigin>
+    <link rel="preconnect" href="https://static.yoomoney.ru" crossorigin>
     <link rel="preconnect" href="https://southclub.ru" crossorigin>
     
     <!-- Resource hints for better performance -->
@@ -88,16 +90,15 @@
     <!-- Content Security Policy (CSP) -->
     <meta http-equiv="Content-Security-Policy" content="
       default-src 'self';
-      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://yookassa.ru;
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://yookassa.ru https://static.yoomoney.ru;
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
       font-src 'self' https://fonts.gstatic.com;
       img-src 'self' data: https: blob:;
-      connect-src 'self' https://southclub.ru https://yookassa.ru;
+      connect-src 'self' https://southclub.ru https://yookassa.ru https://static.yoomoney.ru;
       media-src 'self';
       object-src 'none';
       base-uri 'self';
       form-action 'self';
-      frame-ancestors 'none';
       upgrade-insecure-requests;
     ">
     

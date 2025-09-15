@@ -61,6 +61,29 @@ server {
             return 204;
         }
     }
+    
+    # Прямой доступ к файлам слайдера
+    location /uploads/slider/ {
+        alias /home/nyuroprint/Backend_SOUTH_CLUB/uploads/slider/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        
+        # CORS заголовки для фронтенда
+        add_header Access-Control-Allow-Origin "*";
+        add_header Access-Control-Allow-Methods "GET, OPTIONS";
+        add_header Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept";
+        
+        # Обработка CORS preflight запросов
+        if ($request_method = 'OPTIONS') {
+            add_header Access-Control-Allow-Origin "*";
+            add_header Access-Control-Allow-Methods "GET, OPTIONS";
+            add_header Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept";
+            add_header Access-Control-Max-Age 1728000;
+            add_header Content-Type "text/plain; charset=utf-8";
+            add_header Content-Length 0;
+            return 204;
+        }
+    }
 }
 ```
 

@@ -1,6 +1,9 @@
 // API service for SOUTH CLUB backend
 const API_BASE_URL = 'https://southclub.ru/api/v1';
 
+// Import utility for secure URLs
+import { ensureHttps } from '../utils/secureUrl';
+
 // Simple cache for API responses
 const cache = new Map<string, { data: any; timestamp: number }>();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
@@ -20,7 +23,11 @@ const setCachedData = (key: string, data: any) => {
 // Build absolute URL for backend-served files
 export const buildFileUrl = (filePath: string): string => {
   if (!filePath) return filePath;
-  if (/^https?:\/\//i.test(filePath)) return filePath;
+  
+  // Если уже полный URL, принудительно используем HTTPS
+  if (/^https?:\/\//i.test(filePath)) {
+    return ensureHttps(filePath);
+  }
   
   try {
     const origin = new URL(API_BASE_URL).origin;
@@ -31,17 +38,31 @@ export const buildFileUrl = (filePath: string): string => {
     if (filePath.includes('/app/uploads/products/')) {
       // Извлекаем только название файла из полного пути
       const fileName = filePath.split('/').pop();
-      return `${origin}/uploads/products/${fileName}`;
+      return ensureHttps(`${origin}/uploads/products/${fileName}`);
+    }
+    
+    // Если путь содержит /app/uploads/slider/, это путь из Docker контейнера для слайдера
+    if (filePath.includes('/app/uploads/slider/')) {
+      // Извлекаем только название файла из полного пути
+      const fileName = filePath.split('/').pop();
+      return ensureHttps(`${origin}/uploads/slider/${fileName}`);
     }
     
     // Если путь уже содержит /uploads/products/, используем как есть
     if (filePath.startsWith('/uploads/products/')) {
-      return `${origin}${filePath}`;
+      return ensureHttps(`${origin}${filePath}`);
     }
     
-    return `${origin}${filePath}`;
-  } catch {
-    return filePath;
+    // Если путь уже содержит /uploads/slider/, используем как есть
+    if (filePath.startsWith('/uploads/slider/')) {
+      return ensureHttps(`${origin}${filePath}`);
+    }
+    
+    // Для всех остальных путей добавляем origin
+    return ensureHttps(`${origin}${filePath}`);
+  } catch (error) {
+    console.warn('Error building file URL:', error, 'for path:', filePath);
+    return ensureHttps(filePath);
   }
 };
 

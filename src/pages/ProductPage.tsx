@@ -867,7 +867,7 @@ const ProductPage: React.FC = () => {
 
   return (
     <PageWrapper>
-      <CornerLogo src={'/images/production/logo_SC.png'} alt="SOUTH CLUB" loading="lazy" decoding="async" />
+      <CornerLogo src={'/images/production/logo_SC.webp'} alt="SOUTH CLUB" loading="lazy" decoding="async" />
       <Container>
         <ProductSection>
           <ImageSection>

@@ -52,7 +52,7 @@ export const Logo: React.FC = () => {
     <LogoWrapper>
       {!isLoaded && <LoadingText>SOUTH CLUB</LoadingText>}
       <LogoImage 
-        src={'/images/production/logo_SC.png'} 
+        src={'/images/production/logo_SC.webp'} 
         alt="SOUTH CLUB Logo" 
         loading="eager"
         $fetchpriority="high"

@@ -10,7 +10,7 @@
 ## 📊 Анализ ресурсов
 
 ### Критичные ресурсы без кеширования:
-- **Логотип**: `logo_SC.png` (220 KiB)
+- **Логотип**: `logo_SC.webp` (220 KiB)
 - **Шрифт**: `heathergreen.otf` (194 KiB)
 - **JS файлы**: `vendor-4x-rQzOQ.js` (157 KiB), `index-C8dWn9XF.js` (56 KiB)
 - **Изображения товаров**: ~300 KiB
@@ -110,7 +110,7 @@ location ~* ^/assets/.*\.(js|css)$ {
 
 ### 1. Проверка заголовков:
 ```bash
-curl -I https://southclub.ru/images/production/logo_SC.png
+curl -I https://southclub.ru/images/production/logo_SC.webp
 ```
 
 Ожидаемый результат:
@@ -184,7 +184,7 @@ gzip_types text/plain text/css application/json application/javascript text/xml 
 ```nginx
 location / {
     http2_push /fonts/heathergreen.otf;
-    http2_push /images/production/logo_SC.png;
+    http2_push /images/production/logo_SC.webp;
 }
 ```
 

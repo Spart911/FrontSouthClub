@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { apiService } from '../services/api';
 import { useConsent } from '../hooks/useConsent';
@@ -146,6 +146,25 @@ export const FeedbackSection: React.FC = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { hasConsent, requestConsent } = useConsent();
+  const [consentState, setConsentState] = useState(hasConsent);
+
+  // Слушаем изменения согласия в реальном времени
+  useEffect(() => {
+    const handleConsentChange = (event: CustomEvent) => {
+      setConsentState(event.detail.hasConsent);
+    };
+
+    window.addEventListener('consentChanged', handleConsentChange as EventListener);
+    
+    return () => {
+      window.removeEventListener('consentChanged', handleConsentChange as EventListener);
+    };
+  }, []);
+
+  // Обновляем локальное состояние при изменении hasConsent из хука
+  useEffect(() => {
+    setConsentState(hasConsent);
+  }, [hasConsent]);
 
   const formatPhoneNumber = (value: string) => {
     // Убираем все нецифровые символы
@@ -231,7 +250,7 @@ export const FeedbackSection: React.FC = () => {
     e.preventDefault();
     
     // Проверка согласия на обработку персональных данных
-    if (!hasConsent) {
+    if (!consentState) {
       alert('Для отправки сообщения необходимо согласие на обработку персональных данных');
       requestConsent();
       return;

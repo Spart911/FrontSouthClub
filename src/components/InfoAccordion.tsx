@@ -20,6 +20,9 @@ const Container = styled.div`
   max-width: 1000px;
   margin: 0 auto;
   position: relative;
+  @media (max-width: 769px) {
+    width: 80%;
+  }
 `;
 
 const AccordionContainer = styled.div`

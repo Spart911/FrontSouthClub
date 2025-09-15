@@ -183,3 +183,56 @@ app.mount("/uploads/products", StaticFiles(directory="/home/nyuroprint/Backend_S
 sudo tail -f /var/log/nginx/error.log
 sudo tail -f /var/log/nginx/access.log
 ```
+
+## Content Security Policy (CSP)
+
+### Добавьте в server блок nginx:
+
+```nginx
+server {
+    listen 443 ssl http2;
+    server_name southclub.ru www.southclub.ru;
+    
+    # Content Security Policy (CSP)
+    add_header Content-Security-Policy "
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://yookassa.ru;
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+      font-src 'self' https://fonts.gstatic.com data:;
+      img-src 'self' data: https: blob:;
+      connect-src 'self' https://southclub.ru https://yookassa.ru;
+      media-src 'self';
+      object-src 'none';
+      base-uri 'self';
+      form-action 'self';
+      frame-ancestors 'none';
+      upgrade-insecure-requests;
+      block-all-mixed-content;
+    " always;
+    
+    # Дополнительные заголовки безопасности
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
+    
+    # HSTS (HTTP Strict Transport Security)
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+    
+    # Остальная конфигурация...
+}
+```
+
+### Что защищает CSP:
+- ✅ **XSS атаки** - блокирует неавторизованные скрипты
+- ✅ **Clickjacking** - запрещает встраивание в iframe
+- ✅ **Mixed content** - принудительный HTTPS
+- ✅ **Data injection** - ограничивает источники данных
+- ✅ **Plugin attacks** - блокирует плагины
+
+### Тестирование CSP:
+1. Откройте DevTools → Security tab
+2. Проверьте, что CSP активна
+3. Убедитесь, что нет нарушений в Console
+4. Проверьте, что все функции работают

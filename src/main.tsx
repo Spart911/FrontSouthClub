@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { preloadCriticalImages } from './utils/preloadImages'
+import { cspMonitor } from './utils/cspMonitor'
 
 async function waitForFonts() {
   try {
@@ -24,6 +25,10 @@ async function waitForFonts() {
 
 async function bootstrap() {
   await waitForFonts()
+  
+  // Initialize CSP monitoring
+  cspMonitor.setEnabled(true)
+  
   const rootEl = document.getElementById('root')!
   createRoot(rootEl).render(
     <StrictMode>

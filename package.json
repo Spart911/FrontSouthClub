@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite --host",
     "build": "tsc && vite build",
+    "build:prod": "tsc && vite build --config vite.config.prod.ts",
     "build:analyze": "npm run build && node scripts/analyze-bundle.js",
     "build:stats": "npm run build && echo '📊 Откройте dist/stats.html для детального анализа'",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",

@@ -531,7 +531,7 @@ const RecommendedCard = styled.a<{ $isComingSoon: boolean }>`
     `}
 `;
 
-const RecommendedImageWrap = styled.div`
+const RecommendedImageWrap = styled.div<{ $isComingSoon?: boolean }>`
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
@@ -546,6 +546,10 @@ const RecommendedImageWrap = styled.div`
     pointer-events: none;
     transition: opacity 0.4s ease, transform 0.4s ease;
     display: block;
+    ${({ $isComingSoon }) => $isComingSoon ? css`
+      filter: blur(6px) saturate(0.9) brightness(0.9);
+      transform: scale(1.05);
+    ` : ''}
   }
 `;
 
@@ -968,7 +972,7 @@ const ProductPage: React.FC = () => {
                       }
                     }}
                   >
-                    <RecommendedImageWrap>
+                    <RecommendedImageWrap $isComingSoon={isComingSoon}>
                       <img src={preview} alt={p.name} />
                     </RecommendedImageWrap>
                     {!isComingSoon && (

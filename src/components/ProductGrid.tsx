@@ -94,7 +94,7 @@ const CardWrapper = styled.div<{ $isComingSoon: boolean; $hasHover: boolean }>`
         top: 50%;
         left: 0;
         width: 100%;
-        height: 46px;
+        height: 9vw;
         background: #1e3ea8;
         transform: translateY(-50%);
         z-index: 2;
@@ -103,11 +103,11 @@ const CardWrapper = styled.div<{ $isComingSoon: boolean; $hasHover: boolean }>`
       &::after {
         content: 'SOON';
         position: absolute;
-        top: 50%;
+        top: 47%;
         left: 50%;
         transform: translate(-50%, -50%);
         font-weight: 900;
-        font-size: 12.2vw;
+        font-size: 9.vw;
         line-height: 1;
         text-align: center;
         color: #ffffff;

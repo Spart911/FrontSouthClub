@@ -103,16 +103,25 @@ const CardWrapper = styled.div<{ $isComingSoon: boolean; $hasHover: boolean }>`
       &::after {
         content: 'SOON';
         position: absolute;
-        top: 47%;
+        top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         font-weight: 900;
-        font-size: clamp(18px, 2.2vw, 28px);
+        font-size: 12.2vw;
         line-height: 1;
         text-align: center;
         color: #ffffff;
         z-index: 3;
       }
+        @media (max-width: 1160px) {
+          font-size: 15.2vw;
+        }
+        @media (max-width: 870px) {
+          font-size: 15.2vw;
+        }
+        @media (max-width: 580px) {
+          font-size: 15.2vw;
+        }
 
       img {
         filter: blur(3px);

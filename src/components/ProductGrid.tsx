@@ -20,29 +20,28 @@ const Title = styled.h2`
   color: rgb(0, 0, 0);
 `;
 const Grid = styled.div`
-  width: 100%;
-  max-width: 1800px;
+  width: 90%;
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 40px;
   justify-items: stretch;
-  min-height: 600px; /* Предотвращаем CLS */
+
 
   @media (max-width: 1440px) {
     grid-template-columns: repeat(3, 1fr);
-    min-height: 500px;
+    width: 95%;
   }
 
   @media (max-width: 1024px) {
     grid-template-columns: repeat(2, 1fr);
-    min-height: 400px;
+    width: 95%;
   }
 
   @media (max-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
     gap: 44px 38px;
-    min-height: 350px;
+    width: 95%;
   }
 `;
 

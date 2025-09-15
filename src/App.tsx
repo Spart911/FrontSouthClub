@@ -11,11 +11,13 @@ import { ConsentModal } from './components/ConsentModal';
 import { ConsentBanner } from './components/ConsentBanner';
 import { useConsent } from './hooks/useConsent';
 
-// Lazy load components below the fold
+// Lazy load components below the fold with error boundaries
 const CommunitySection = lazy(() => import('./components/CommunitySection').then(module => ({ default: module.CommunitySection })));
 const FeedbackSection = lazy(() => import('./components/FeedbackSection').then(module => ({ default: module.FeedbackSection })));
 const InfoAccordion = lazy(() => import('./components/InfoAccordion').then(module => ({ default: module.InfoAccordion })));
 const RunningTape = lazy(() => import('./components/RunningTape').then(module => ({ default: module.RunningTape })));
+
+// Lazy components are wrapped with Suspense in their usage
 
 // Lazy load pages
 const ProductPage = lazy(() => import('./pages/ProductPage'));

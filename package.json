@@ -4,9 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-
     "dev": "vite --host",
     "build": "tsc && vite build",
+    "build:analyze": "npm run build && node scripts/analyze-bundle.js",
+    "build:stats": "npm run build && echo '📊 Откройте dist/stats.html для детального анализа'",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview --host",
     "vercel-build": "npm run build",

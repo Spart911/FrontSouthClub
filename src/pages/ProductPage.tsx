@@ -547,7 +547,7 @@ const RecommendedImageWrap = styled.div<{ $isComingSoon?: boolean }>`
     transition: opacity 0.4s ease, transform 0.4s ease;
     display: block;
     ${({ $isComingSoon }) => $isComingSoon ? css`
-      filter: blur(6px) saturate(0.9) brightness(0.9);
+      filter: blur(3px);
       transform: scale(1.05);
     ` : ''}
   }

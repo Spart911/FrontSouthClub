@@ -23,6 +23,9 @@ const Container = styled.div`
   margin: 0 auto;
   display: flex;
   justify-content: center;
+  @media (max-width: 1024px) {
+    width: 80%;
+  }
 `;
 
 const Form = styled.form`
@@ -54,6 +57,9 @@ const Label = styled.label`
   min-width: 9.5vw;
   text-align: left;
   
+  @media (max-width: 1024px) {
+    min-width: 21.5vw;
+  }
   @media (max-width: 768px) {
     min-width: auto;
     text-align: center;

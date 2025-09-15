@@ -3,43 +3,87 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/images/production/logo_SC.png" />
+    <link rel="apple-touch-icon" href="/images/production/logo_SC.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>SOUTH CLUB - Уличная одежда и аксессуары</title>
-    <meta name="description" content="SOUTH CLUB - Уличная одежда и аксессуары. Современная мода для активной жизни. Качественные материалы, уникальный дизайн, стильные решения для вашего гардероба." />
-    <meta name="keywords" content="уличная одежда, худи, футболки, куртки, мода, стиль, аксессуары, streetwear" />
+    
+    <!-- Primary Meta Tags -->
+    <title>SOUTH CLUB - Уличная одежда и аксессуары из Ростова-на-Дону | Streetwear бренд</title>
+    <meta name="title" content="SOUTH CLUB - Уличная одежда и аксессуары из Ростова-на-Дону | Streetwear бренд" />
+    <meta name="description" content="SOUTH CLUB - премиальный streetwear бренд из Ростова-на-Дону. Уникальная уличная одежда: худи, футболки, куртки, аксессуары. Качественные материалы, современный дизайн, быстрая доставка по России." />
+    <meta name="keywords" content="уличная одежда, streetwear, худи, футболки, куртки, мода, стиль, аксессуары, Ростов-на-Дону, бренд одежды, уличная мода, молодежная одежда, капсульная коллекция" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://southclub.ru" />
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://southclub.ru" />
-    <meta property="og:title" content="SOUTH CLUB - Уличная одежда и аксессуары" />
-    <meta property="og:description" content="SOUTH CLUB - Уличная одежда и аксессуары. Современная мода для активной жизни." />
-    <meta property="og:image" content="/images/production/logo_SC.png" />
+    <meta property="og:title" content="SOUTH CLUB - Уличная одежда и аксессуары из Ростова-на-Дону" />
+    <meta property="og:description" content="SOUTH CLUB - премиальный streetwear бренд из Ростова-на-Дону. Уникальная уличная одежда: худи, футболки, куртки, аксессуары. Качественные материалы, современный дизайн." />
+    <meta property="og:image" content="https://southclub.ru/images/production/logo_SC.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="SOUTH CLUB - Логотип бренда уличной одежды" />
+    <meta property="og:site_name" content="SOUTH CLUB" />
+    <meta property="og:locale" content="ru_RU" />
     
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://southclub.ru" />
-    <meta property="twitter:title" content="SOUTH CLUB - Уличная одежда и аксессуары" />
-    <meta property="twitter:description" content="SOUTH CLUB - Уличная одежда и аксессуары. Современная мода для активной жизни." />
-    <meta property="twitter:image" content="/images/production/logo_SC.png" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://southclub.ru" />
+    <meta name="twitter:title" content="SOUTH CLUB - Уличная одежда и аксессуары из Ростова-на-Дону" />
+    <meta name="twitter:description" content="SOUTH CLUB - премиальный streetwear бренд из Ростова-на-Дону. Уникальная уличная одежда: худи, футболки, куртки, аксессуары." />
+    <meta name="twitter:image" content="https://southclub.ru/images/production/logo_SC.png" />
+    <meta name="twitter:image:alt" content="SOUTH CLUB - Логотип бренда уличной одежды" />
     
     <!-- Additional Meta Tags -->
     <meta name="author" content="SOUTH CLUB" />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="theme-color" content="#1e3ea8" />
+    <meta name="msapplication-TileColor" content="#1e3ea8" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    
+    <!-- Geo Tags -->
+    <meta name="geo.region" content="RU-ROS" />
+    <meta name="geo.placename" content="Ростов-на-Дону" />
+    <meta name="geo.position" content="47.2225;39.7186" />
+    <meta name="ICBM" content="47.2225, 39.7186" />
+    
+    <!-- Language and Content -->
+    <meta name="language" content="Russian" />
+    <meta name="revisit-after" content="7 days" />
+    <meta name="distribution" content="global" />
+    <meta name="rating" content="general" />
     
 
     <!-- Preload critical resources -->
     <link rel="preload" href="/fonts/heathergreen.otf" as="font" type="font/otf" crossorigin>
     <link rel="preload" href="/images/production/logo_SC.png" as="image">
+    <link rel="preload" href="/src/main.tsx" as="script">
     
     <!-- DNS prefetch for external resources -->
     <link rel="dns-prefetch" href="//yookassa.ru">
-    <link rel="dns-prefetch" href="//localhost:8000">
+    <link rel="dns-prefetch" href="//southclub.ru">
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
     
-
-    <!-- YooKassa for payments - load async -->
-    <script src="https://yookassa.ru/checkout-widget/v1/checkout-widget.js" async></script>
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://yookassa.ru" crossorigin>
+    <link rel="preconnect" href="https://southclub.ru" crossorigin>
+    
+    <!-- Resource hints for better performance -->
+    <link rel="prefetch" href="/images/production/logo.png">
+    <link rel="prefetch" href="/main_images/1.webp">
+    <link rel="prefetch" href="/main_images/2.webp">
+    
+    <!-- YooKassa for payments - load async with defer -->
+    <script src="https://yookassa.ru/checkout-widget/v1/checkout-widget.js" async defer></script>
+    
+    <!-- Performance optimization -->
+    <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="SOUTH CLUB">
     
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -49,10 +93,66 @@
       "name": "SOUTH CLUB",
       "url": "https://southclub.ru",
       "logo": "https://southclub.ru/images/production/logo_SC.png",
-      "description": "Уличная одежда и аксессуары",
+      "description": "Премиальный streetwear бренд из Ростова-на-Дону. Уникальная уличная одежда: худи, футболки, куртки, аксессуары.",
+      "foundingDate": "2024",
+      "founder": {
+        "@type": "Person",
+        "name": "SOUTH CLUB Team"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Ростов-на-Дону",
+        "addressRegion": "Ростовская область",
+        "addressCountry": "RU"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "availableLanguage": "Russian"
+      },
       "sameAs": [
-        "https://instagram.com/southclub",
-        "https://vk.com/southclub"
+        "https://southclub.ru"
+      ],
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://southclub.ru/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    
+    <!-- Additional Structured Data for E-commerce -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "SOUTH CLUB",
+      "url": "https://southclub.ru",
+      "description": "Официальный сайт бренда SOUTH CLUB - уличная одежда и аксессуары",
+      "publisher": {
+        "@type": "Organization",
+        "name": "SOUTH CLUB"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://southclub.ru/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    
+    <!-- BreadcrumbList Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Главная",
+          "item": "https://southclub.ru"
+        }
       ]
     }
     </script>

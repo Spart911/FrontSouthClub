@@ -1,3 +1,21 @@
 User-agent: *
 Allow: /
-Sitemap: https://lumni-p5kk6a6g5-egors-projects-da0957dd.vercel.app/sitemap.xml 
+
+# Sitemap
+Sitemap: https://southclub.ru/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1
+
+# Disallow admin pages
+Disallow: /admin/
+Disallow: /api/
+
+# Allow important pages
+Allow: /product/
+Allow: /uploads/
+Allow: /images/
+Allow: /fonts/
+
+# Host
+Host: https://southclub.ru

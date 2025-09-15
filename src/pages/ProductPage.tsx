@@ -498,27 +498,45 @@ const RecommendedCard = styled.a<{ $isComingSoon: boolean }>`
       &::before {
         content: '';
         position: absolute;
-        top: 50%;
+        top: 43%;
         left: 0;
         width: 100%;
-        height: 46px;
+        height: 8vw;
         background: #1e3ea8;
         transform: translateY(-50%);
         z-index: 2;
+
+        @media (max-width: 1440px) {
+          top: 43%;
+          height: 10vw;
+        }
+        @media (max-width: 1024px) {
+          top: 40%;
+          height: 10vw;
+        }
       }
 
       &::after {
         content: 'SOON';
         position: absolute;
-        top: 50%;
+        top: 40.5%;
         left: 50%;
         transform: translate(-50%, -50%);
         font-weight: 900;
-        font-size: clamp(18px, 2.2vw, 28px);
+        font-size: 9vw;
         line-height: 1;
         text-align: center;
         color: #ffffff;
         z-index: 3;
+
+        @media (max-width: 1440px) {
+          top: 41%;
+          font-size: 10vw;
+        }
+        @media (max-width: 1024px) {
+          top: 38.5%;
+          font-size: 11vw;
+        }
       }
     `}
 `;

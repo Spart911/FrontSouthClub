@@ -98,7 +98,6 @@ const CardWrapper = styled.div<{ $isComingSoon: boolean; $hasHover: boolean }>`
         background: #1e3ea8;
         transform: translateY(-50%);
         z-index: 2;
-      }
 
         @media (max-width: 1440px) {
           top: 43%;
@@ -108,8 +107,7 @@ const CardWrapper = styled.div<{ $isComingSoon: boolean; $hasHover: boolean }>`
           top: 40%;
           height: 10vw;
         }
-
-
+      }
       &::after {
         content: 'SOON';
         position: absolute;
@@ -122,7 +120,6 @@ const CardWrapper = styled.div<{ $isComingSoon: boolean; $hasHover: boolean }>`
         text-align: center;
         color: #ffffff;
         z-index: 3;
-      }
 
         @media (max-width: 1440px) {
           top: 41%;
@@ -132,6 +129,7 @@ const CardWrapper = styled.div<{ $isComingSoon: boolean; $hasHover: boolean }>`
           top: 39%;
           font-size: 16vw;
         }
+      }
 
       img {
         filter: blur(3px);

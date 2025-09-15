@@ -19,7 +19,7 @@ const Title = styled.h2`
 `;
 
 const Container = styled.div`
-  width: 80%;
+  width: 43%;
   margin: 0 auto;
   display: flex;
   justify-content: center;
@@ -28,7 +28,7 @@ const Container = styled.div`
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   align-items: center;
   width: 100%;
 `;
@@ -51,7 +51,7 @@ const Label = styled.label`
   font-family: 'HeatherGreen', 'Helvetica', sans-serif;
   font-weight: 700;
   color: #000;
-  min-width: 15vw;
+  min-width: 9.5vw;
   text-align: left;
   
   @media (max-width: 768px) {
@@ -110,7 +110,8 @@ const TextArea = styled.textarea`
   }
 `;
 
-const SubmitButton = styled.button`
+const SubmitButton = styled.button`\
+  margin-top: 32px;
   padding: 16px 32px;
   background: #1e3ea8;
   color: #fff;

@@ -70,6 +70,7 @@ const AccordionHeader = styled.button<{ $isOpen: boolean }>`
 
 const AccordionTitle = styled.span`
   text-align: left;
+  font-size: 2.8rem;
 `;
 
 const AccordionIcon = styled.span<{ $isOpen: boolean }>`

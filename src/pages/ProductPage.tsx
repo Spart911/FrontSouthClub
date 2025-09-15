@@ -501,7 +501,7 @@ const RecommendedCard = styled.a<{ $isComingSoon: boolean }>`
         top: 50%;
         left: 0;
         width: 100%;
-        height: 24%;
+        height: 46px;
         background: #1e3ea8;
         transform: translateY(-50%);
         z-index: 2;
@@ -514,7 +514,8 @@ const RecommendedCard = styled.a<{ $isComingSoon: boolean }>`
         left: 50%;
         transform: translate(-50%, -50%);
         font-weight: 900;
-        font-size: clamp(20px, 6vw, 56px);
+        font-size: clamp(18px, 2.2vw, 28px);
+        line-height: 1;
         text-align: center;
         color: #ffffff;
         z-index: 3;

@@ -84,6 +84,50 @@ server {
             return 204;
         }
     }
+    
+    # Кеширование статики - ПОСЛЕ блоков /uploads/
+    location ~* \.(?:ico|png|jpg|jpeg|gif|svg|webp|css|js|woff2?|ttf|eot)$ {
+        try_files $uri =404;
+        expires 1y;
+        access_log off;
+        add_header Cache-Control "public, immutable";
+        add_header Vary "Accept-Encoding";
+        
+        # Дополнительные заголовки для оптимизации
+        add_header X-Content-Type-Options "nosniff";
+        add_header X-Frame-Options "SAMEORIGIN";
+    }
+    
+    # Специальное кеширование для шрифтов
+    location ~* \.(?:woff2?|ttf|eot|otf)$ {
+        expires 1y;
+        access_log off;
+        add_header Cache-Control "public, immutable";
+        add_header Vary "Accept-Encoding";
+        add_header Access-Control-Allow-Origin "*";
+    }
+    
+    # Кеширование для изображений товаров и слайдера
+    location ~* ^/(uploads/products/|uploads/slider/|images/production/|main_images/) {
+        expires 1y;
+        access_log off;
+        add_header Cache-Control "public, immutable";
+        add_header Vary "Accept-Encoding";
+    }
+    
+    # Кеширование для JS и CSS файлов
+    location ~* ^/assets/.*\.(js|css)$ {
+        expires 1y;
+        access_log off;
+        add_header Cache-Control "public, immutable";
+        add_header Vary "Accept-Encoding";
+        add_header X-Content-Type-Options "nosniff";
+    }
+    
+    # Главный блок для SPA (React/Vite)
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
 }
 ```
 

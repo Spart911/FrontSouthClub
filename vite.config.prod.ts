@@ -6,17 +6,7 @@ import compression from 'vite-plugin-compression2'
 export default defineConfig({
   plugins: [
     react({
-      // Оптимизация для современных браузеров
-      babel: {
-        plugins: [
-          // Удаляем неиспользуемые импорты
-          ['babel-plugin-import', {
-            libraryName: 'react',
-            libraryDirectory: '',
-            camel2DashComponentName: false,
-          }, 'react'],
-        ],
-      },
+      // Базовая конфигурация React без дополнительных Babel плагинов
     }),
     compression({
       algorithm: 'gzip',

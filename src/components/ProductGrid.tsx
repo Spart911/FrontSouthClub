@@ -92,7 +92,7 @@ const CardWrapper = styled.div<{ $isComingSoon: boolean; $hasHover: boolean }>`
       &::before {
         content: '';
         position: absolute;
-        top: 47%;
+        top: 50%;
         left: 0;
         width: 100%;
         height: 24%;
@@ -104,32 +104,18 @@ const CardWrapper = styled.div<{ $isComingSoon: boolean; $hasHover: boolean }>`
       &::after {
         content: 'SOON';
         position: absolute;
-        top: 35%;
+        top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         font-weight: 900;
-        font-size: 10vw; 
+        font-size: clamp(20px, 6vw, 56px);
         text-align: center;
-        background: linear-gradient(to bottom, #1e3ea8 50%, white 50%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        color: #ffffff;
         z-index: 3;
-
-        @media (max-width: 1160px) {
-          font-size: 15vw;
-        }
-        @media (max-width: 870px) {
-          font-size: 22vw;
-        }
-        @media (max-width: 580px) {
-          font-size: 25vw;
-        }
-      }
-
       img {
         filter: blur(3px);
         clip-path: inset(0);
-      }
+        }
     `}
 `;
 

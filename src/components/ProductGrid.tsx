@@ -92,8 +92,8 @@ const CardWrapper = styled.div<{ $isComingSoon: boolean; $hasHover: boolean }>`
         content: '';
         position: absolute;
         top: 43%;
-        left: 0;
-        width: 100%;
+        left: -1px;
+        width: 101%;
         height: 8vw;
         background: #1e3ea8;
         transform: translateY(-50%);

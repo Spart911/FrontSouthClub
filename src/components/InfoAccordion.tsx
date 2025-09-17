@@ -104,7 +104,7 @@ const AccordionIcon = styled.span<{ $isOpen: boolean }>`
 `;
 
 const AccordionContent = styled.div<{ $isOpen: boolean }>`
-  max-height: ${props => props.$isOpen ? '500px' : '0'};
+  max-height: ${props => props.$isOpen ? '1500px' : '0'};
   overflow: hidden;
   transition: max-height 0.3s ease;
   background: #ffffff;

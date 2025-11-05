@@ -469,6 +469,7 @@ const AdminProducts: React.FC = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [formData, setFormData] = useState<ProductCreate>({
     name: '',
+    sku: '',
     soon: false,
     color: '',
     composition: '',
@@ -507,6 +508,7 @@ const AdminProducts: React.FC = () => {
     setEditingProduct(null);
     setFormData({
       name: '',
+      sku: '',
       soon: false,
       color: '',
       composition: '',
@@ -524,6 +526,7 @@ const AdminProducts: React.FC = () => {
     setEditingProduct(product);
     setFormData({
       name: product.name,
+      sku: product.sku || '',
       soon: !!product.soon,
       color: product.color || '',
       composition: product.composition || '',
@@ -840,6 +843,7 @@ const AdminProducts: React.FC = () => {
               <ProductName>{product.name}</ProductName>
               <ProductPrice>{product.price} RUB</ProductPrice>
               <ProductDetails>
+                {product.sku && <p><strong>Артикул:</strong> {product.sku}</p>}
                 <p><strong>Размеры:</strong> {product.size?.map(size => getSizeLabel(size)).join(', ') || 'Не указаны'}</p>
                 {product.color && <p><strong>Цвет:</strong> {product.color}</p>}
                 {product.composition && <p><strong>Состав:</strong> {product.composition}</p>}
@@ -892,6 +896,16 @@ const AdminProducts: React.FC = () => {
                 value={formData.name}
                 onChange={(e) => handleInputChange('name', e.target.value)}
                 required
+              />
+            </FormGroup>
+
+            <FormGroup>
+              <Label>Артикул</Label>
+              <Input
+                type="text"
+                value={formData.sku || ''}
+                onChange={(e) => handleInputChange('sku', e.target.value)}
+                placeholder="Введите артикул товара"
               />
             </FormGroup>
 

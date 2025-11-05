@@ -904,6 +904,12 @@ const ProductPage: React.FC = () => {
             <SpecificationsSection>
               <SpecificationsTitle>Характеристики:</SpecificationsTitle>
               <SpecificationsList>
+                {product.sku && (
+                  <SpecificationItem>
+                    <SpecificationLabel>Артикул: </SpecificationLabel>
+                    <SpecificationValue>{product.sku}</SpecificationValue>
+                  </SpecificationItem>
+                )}
                 {product.color && (
                   <SpecificationItem>
                     <SpecificationLabel>Цвет: </SpecificationLabel>

@@ -84,6 +84,7 @@ export const getSizeLabel = (size: number): string => {
 export interface Product {
   id: string;
   name: string;
+  sku?: string;
   soon?: boolean;
   color?: string;
   composition?: string;
@@ -104,6 +105,7 @@ export interface ProductPhoto {
 
 export interface ProductCreate {
   name: string;
+  sku?: string;
   soon?: boolean;
   color?: string;
   composition?: string;
@@ -114,6 +116,7 @@ export interface ProductCreate {
 
 export interface ProductUpdate {
   name?: string;
+  sku?: string;
   soon?: boolean;
   color?: string;
   composition?: string;

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { apiService, Order, OrderListResponse } from '../services/api';
+import { apiService } from '../services/api';
+import type { Order, OrderListResponse } from '../services/api';
 
 const Container = styled.div`
   min-height: 100vh;

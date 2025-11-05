@@ -60,8 +60,6 @@ export default defineConfig({
           'router': ['react-router-dom'],
           // Стилизация
           'ui': ['styled-components'],
-          // Утилиты
-          'utils': ['react', 'react-dom'],
         },
         // Оптимизация имен файлов
         chunkFileNames: 'assets/[name]-[hash].js',

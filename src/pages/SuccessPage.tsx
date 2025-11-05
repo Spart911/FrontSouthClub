@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { apiService, Order } from '../services/api';
+import { apiService } from '../services/api';
+import type { Order } from '../services/api';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -222,7 +223,6 @@ const SuccessPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const orderId = searchParams.get('order_id');
-  const orderNumber = searchParams.get('order_number');
 
   useEffect(() => {
     const fetchOrder = async () => {

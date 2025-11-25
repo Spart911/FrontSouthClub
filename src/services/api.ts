@@ -185,9 +185,9 @@ export interface OrderItem {
 
 export interface OrderCreate {
   customer_name: string;
-  customer_email: string;
-  customer_phone: string;
-  delivery_address: string;
+  email: string;
+  phone: string;
+  address: string;
   items: OrderItem[];
   total_amount: number;
   delivery_time: string;

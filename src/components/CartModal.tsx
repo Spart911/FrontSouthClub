@@ -377,6 +377,7 @@ const EmptyCart = styled.div`
   letter-spacing: 0.05em;
 `;
 
+
 export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const { hasConsent, requestConsent } = useConsent();
@@ -392,6 +393,21 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
     deliveryDate: '',
     deliveryTime: ''
   });
+
+  const getDeliveryDateTime = () => {
+    if (!formData.deliveryDate || !formData.deliveryTime) return '';
+
+    const [startHour, endHour] = formData.deliveryTime.split('-');
+    const start = parseInt(startHour, 10);
+    const end = parseInt(endHour, 10);
+
+    if (isNaN(start) || isNaN(end)) return '';
+
+    const middleHour = Math.floor((start + end) / 2);
+    const hourStr = String(middleHour).padStart(2, '0');
+
+    return `${formData.deliveryDate}T${hourStr}:00:00`;
+  };
 
   const [showTimeOptions, setShowTimeOptions] = useState(false);
 
@@ -608,9 +624,9 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
       // Создаем заказ через новый API
       const orderData: OrderCreate = {
         customer_name: formData.fullName,
-        email: formData.email,
-        phone: formData.phone,
-        address: `${formData.street}, ${formData.house}${formData.apartment ? `, кв. ${formData.apartment}` : ''}`,
+        customer_email: formData.email,
+        customer_phone: formData.phone,
+        delivery_address: `${formData.street}, ${formData.house}${formData.apartment ? `, кв. ${formData.apartment}` : ''}`,
         delivery_time: getDeliveryDateTime(),
         items: orderItems,
         total_amount: total

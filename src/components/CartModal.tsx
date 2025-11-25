@@ -608,12 +608,12 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
       // Создаем заказ через новый API
       const orderData: OrderCreate = {
         customer_name: formData.fullName,
-        customer_email: formData.email,
-        customer_phone: formData.phone,
-        delivery_address: `${formData.street}, ${formData.house}${formData.apartment ? `, кв. ${formData.apartment}` : ''}`,
+        email: formData.email,
+        phone: formData.phone,
+        address: `${formData.street}, ${formData.house}${formData.apartment ? `, кв. ${formData.apartment}` : ''}`,
+        delivery_time: getDeliveryDateTime(),
         items: orderItems,
-        total_amount: total,
-        payment_method: 'yookassa'
+        total_amount: total
       };
 
       const order = await apiService.createOrder(orderData);

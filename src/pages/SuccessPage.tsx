@@ -323,12 +323,6 @@ const SuccessPage: React.FC = () => {
               <InfoValue>{order.total_amount} RUB</InfoValue>
             </InfoRow>
             <InfoRow>
-              <InfoLabel>Способ оплаты:</InfoLabel>
-              <InfoValue>
-                {order.payment_method === 'yookassa' ? 'ЮKassa' : 'Наличные'}
-              </InfoValue>
-            </InfoRow>
-            <InfoRow>
               <InfoLabel>Дата создания:</InfoLabel>
               <InfoValue>
                 {new Date(order.created_at).toLocaleDateString('ru-RU', {

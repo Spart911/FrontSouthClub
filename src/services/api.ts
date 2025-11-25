@@ -190,7 +190,7 @@ export interface OrderCreate {
   delivery_address: string;
   items: OrderItem[];
   total_amount: number;
-  payment_method: 'yookassa' | 'cash';
+  delivery_time: string;
 }
 
 export interface Order {
@@ -202,10 +202,10 @@ export interface Order {
   delivery_address: string;
   items: OrderItem[];
   total_amount: number;
-  payment_method: 'yookassa' | 'cash';
   status: 'pending' | 'paid' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   payment_url?: string;
   payment_id?: string;
+  delivery_time?: string;
   created_at: string;
   updated_at: string;
 }

@@ -59,7 +59,6 @@ interface OrderCreate {
   delivery_address: string;
   items: OrderItem[];
   total_amount: number;
-  payment_method: 'yookassa' | 'cash';
 }
 ```
 
@@ -74,7 +73,6 @@ interface Order {
   delivery_address: string;
   items: OrderItem[];
   total_amount: number;
-  payment_method: 'yookassa' | 'cash';
   status: 'pending' | 'paid' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   payment_url?: string;
   payment_id?: string;

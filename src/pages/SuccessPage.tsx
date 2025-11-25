@@ -259,8 +259,8 @@ const SuccessPage: React.FC = () => {
   };
 
   const handleTrackOrder = () => {
-    if (order?.customer_email) {
-      navigate(`/orders?email=${encodeURIComponent(order.customer_email)}`);
+    if (order?.email) {
+      navigate(`/orders?email=${encodeURIComponent(order.email)}`);
     }
   };
 

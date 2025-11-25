@@ -178,6 +178,7 @@ export interface AdminLoginResponse {
 // Order types
 export interface OrderItem {
   product_id: string;
+  name: string;
   quantity: number;
   size: number;
   price: number;
@@ -197,9 +198,9 @@ export interface Order {
   id: string;
   order_number: string;
   customer_name: string;
-  customer_email: string;
-  customer_phone: string;
-  delivery_address: string;
+  email: string;
+  phone: string;
+  address: string;
   items: OrderItem[];
   total_amount: number;
   status: 'pending' | 'paid' | 'processing' | 'shipped' | 'delivered' | 'cancelled';

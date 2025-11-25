@@ -616,6 +616,7 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
       // Преобразуем товары корзины в формат API
       const orderItems: OrderItem[] = cartItems.map(item => ({
         product_id: item.id,
+        name: item.name,
         quantity: item.quantity,
         size: parseInt(item.size) || 0, // Преобразуем размер в число
         price: item.price
@@ -624,9 +625,9 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
       // Создаем заказ через новый API
       const orderData: OrderCreate = {
         customer_name: formData.fullName,
-        customer_email: formData.email,
-        customer_phone: formData.phone,
-        delivery_address: `${formData.street}, ${formData.house}${formData.apartment ? `, кв. ${formData.apartment}` : ''}`,
+        email: formData.email,
+        phone: formData.phone,
+        address: `${formData.street}, ${formData.house}${formData.apartment ? `, кв. ${formData.apartment}` : ''}`,
         delivery_time: getDeliveryDateTime(),
         items: orderItems,
         total_amount: total

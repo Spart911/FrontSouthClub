@@ -448,7 +448,7 @@ const OrdersPage: React.FC = () => {
                   </DetailItem>
                   <DetailItem>
                     <DetailLabel>Адрес доставки</DetailLabel>
-                    <DetailValue>{order.delivery_address}</DetailValue>
+                    <DetailValue>{order.address}</DetailValue>
                   </DetailItem>
                 </OrderDetails>
 

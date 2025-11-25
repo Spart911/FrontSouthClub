@@ -417,7 +417,7 @@ const AdminOrders: React.FC = () => {
                 <TableCell>
                   <div>{order.customer_name}</div>
                   <div style={{ fontSize: '1.1rem', color: '#6c757d' }}>
-                    {order.customer_email}
+                    {order.email}
                   </div>
                 </TableCell>
                 <TableCell>{order.total_amount} RUB</TableCell>

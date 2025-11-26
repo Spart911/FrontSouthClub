@@ -762,8 +762,7 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
       };
       document.addEventListener('keydown', handleEscape);
 
-      // Показываем сообщение загрузки
-      paymentForm.innerHTML = 'Загрузка формы оплаты...';
+
 
       // Загружаем скрипт YooKassa и инициализируем виджет
       const loadPaymentWidget = async () => {

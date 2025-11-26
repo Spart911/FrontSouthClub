@@ -636,95 +636,144 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
 
       const order = await apiService.createOrder(orderData);
       
-      // Открываем новое окно с оплатой
-      const paymentWindow = window.open('', '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
-      
-      if (!paymentWindow) {
-        alert('Пожалуйста, разрешите всплывающие окна для завершения оплаты');
-        return;
-      }
-
-      // Создаем HTML для страницы оплаты
-      const paymentHTML = `
-        <!DOCTYPE html>
-        <html lang="ru">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Оплата заказа</title>
-          <style>
-            body {
-              font-family: 'Arial', sans-serif;
-              margin: 0;
-              padding: 20px;
-              background: #f5f5f5;
-            }
-            .container {
-              max-width: 600px;
-              margin: 0 auto;
-              background: white;
-              padding: 30px;
-              border-radius: 10px;
-              box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            }
-            .header {
-              text-align: center;
-              margin-bottom: 30px;
-            }
-            .loading {
-              text-align: center;
-              padding: 40px;
-              font-size: 18px;
-              color: #666;
-            }
-            .error {
-              color: #e74c3c;
-              text-align: center;
-              padding: 20px;
-              background: #ffeaea;
-              border-radius: 5px;
-              margin: 20px 0;
-            }
-            #payment-form {
-              min-height: 400px;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1>Оплата заказа</h1>
-              <p>Номер заказа: ${order.order_number}</p>
-              <p>Сумма к оплате: ${total} RUB</p>
-            </div>
-            <div id="payment-form">
-              <div class="loading">Загрузка формы оплаты...</div>
-            </div>
-          </div>
-          <script src="https://yookassa.ru/checkout-widget/v1/checkout-widget.js" async defer></script>
-          <script>
-            try {
-              const checkout = new YooMoneyCheckoutWidget({
-                confirmation_token: '${order.payment_url}',
-                return_url: '${window.location.origin}/success?order_id=${order.id}&order_number=${order.order_number}',
-                error_callback: function(error) {
-                  console.error('Ошибка виджета оплаты:', error);
-                  document.getElementById('payment-form').innerHTML = '<div class="error">Произошла ошибка при оплате. Пожалуйста, попробуйте позже.</div>';
-                }
-              });
-
-              checkout.render('payment-form');
-            } catch (error) {
-              console.error('Ошибка инициализации оплаты:', error);
-              document.getElementById('payment-form').innerHTML = '<div class="error">Ошибка загрузки формы оплаты. Пожалуйста, обновите страницу.</div>';
-            }
-          </script>
-        </body>
-        </html>
+      // Создаем модальное окно оплаты вместо нового окна браузера
+      const paymentModal = document.createElement('div');
+      paymentModal.id = 'payment-modal';
+      paymentModal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: Arial, sans-serif;
       `;
 
-      paymentWindow.document.write(paymentHTML);
-      paymentWindow.document.close();
+      const paymentContent = document.createElement('div');
+      paymentContent.style.cssText = `
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        max-width: 600px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      `;
+
+      const closeButton = document.createElement('button');
+      closeButton.innerHTML = '×';
+      closeButton.style.cssText = `
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        background: none;
+        border: none;
+        font-size: 28px;
+        cursor: pointer;
+        color: #666;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: background-color 0.2s;
+      `;
+      closeButton.onmouseover = () => closeButton.style.backgroundColor = '#f0f0f0';
+      closeButton.onmouseout = () => closeButton.style.backgroundColor = 'transparent';
+      closeButton.onclick = () => {
+        document.body.removeChild(paymentModal);
+      };
+
+      const header = document.createElement('div');
+      header.style.cssText = `
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eee;
+      `;
+      header.innerHTML = `
+        <h2 style="margin: 0 0 10px 0; color: #333; font-size: 24px;">Оплата заказа</h2>
+        <p style="margin: 5px 0; color: #666;">Номер заказа: <strong>${order.order_number}</strong></p>
+        <p style="margin: 5px 0; color: #666;">Сумма к оплате: <strong>${total} RUB</strong></p>
+      `;
+
+      const paymentForm = document.createElement('div');
+      paymentForm.id = 'payment-form';
+      paymentForm.style.cssText = `
+        min-height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #666;
+        font-size: 16px;
+      `;
+      paymentForm.innerHTML = 'Загрузка формы оплаты...';
+
+      paymentContent.appendChild(closeButton);
+      paymentContent.appendChild(header);
+      paymentContent.appendChild(paymentForm);
+      paymentModal.appendChild(paymentContent);
+      document.body.appendChild(paymentModal);
+
+      // Закрытие модального окна по клику вне контента
+      paymentModal.onclick = (e) => {
+        if (e.target === paymentModal) {
+          document.body.removeChild(paymentModal);
+        }
+      };
+
+      // Закрытие по клавише Escape
+      const handleEscape = (e) => {
+        if (e.key === 'Escape') {
+          document.body.removeChild(paymentModal);
+          document.removeEventListener('keydown', handleEscape);
+        }
+      };
+      document.addEventListener('keydown', handleEscape);
+
+      // Загружаем скрипт YooKassa и инициализируем виджет
+      const loadPaymentWidget = async () => {
+        try {
+          // Проверяем, загружен ли уже скрипт
+          if (!window.YooMoneyCheckoutWidget) {
+            await new Promise((resolve, reject) => {
+              const script = document.createElement('script');
+              script.src = 'https://yookassa.ru/checkout-widget/v1/checkout-widget.js';
+              script.async = true;
+              script.defer = true;
+              script.onload = resolve;
+              script.onerror = reject;
+              document.head.appendChild(script);
+            });
+          }
+
+          // Ждем небольшую паузу для инициализации
+          await new Promise(resolve => setTimeout(resolve, 100));
+
+          const checkout = new window.YooMoneyCheckoutWidget({
+            confirmation_token: order.payment_url,
+            return_url: `${window.location.origin}/success?order_id=${order.id}&order_number=${order.order_number}`,
+            error_callback: function(error) {
+              console.error('Ошибка виджета оплаты:', error);
+              paymentForm.innerHTML = '<div style="color: #d32f2f; background: #ffebee; padding: 20px; border-radius: 5px; text-align: center; border: 1px solid #ffcdd2;">Произошла ошибка при оплате. Пожалуйста, попробуйте позже или обратитесь в поддержку.</div>';
+            }
+          });
+
+          checkout.render('payment-form');
+        } catch (error) {
+          console.error('Ошибка инициализации оплаты:', error);
+          paymentForm.innerHTML = '<div style="color: #d32f2f; background: #ffebee; padding: 20px; border-radius: 5px; text-align: center; border: 1px solid #ffcdd2;">Ошибка загрузки формы оплаты. Пожалуйста, обновите страницу и попробуйте снова.</div>';
+        }
+      };
+
+      loadPaymentWidget();
 
       // Очищаем корзину после успешного создания заказа
       cartService.clearCart();

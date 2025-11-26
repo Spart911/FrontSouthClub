@@ -236,12 +236,12 @@ CSP добавлен в `index.html` в виде meta-тега:
 ```html
 <meta http-equiv="Content-Security-Policy" content="
   default-src 'self';
-  script-src 'self' 'unsafe-inline' 'unsafe-eval' data: https://yookassa.ru https://*.yookassa.ru https://static.yoomoney.ru https://*.yoomoney.ru;
+  script-src 'self' 'unsafe-inline' 'unsafe-eval' data: https://yookassa.ru https://*.yookassa.ru https://static.yoomoney.ru https://*.yoomoney.ru https://checkout.yoomoney.ru;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   font-src 'self' https://fonts.gstatic.com data:;
   img-src 'self' data: https: blob:;
-  connect-src 'self' https://southclub.ru https://yookassa.ru https://*.yookassa.ru https://static.yoomoney.ru https://yoomoney.ru https://*.yoomoney.ru;
-  frame-src 'self' https://yookassa.ru https://yoomoney.ru;
+  connect-src 'self' https://southclub.ru https://yookassa.ru https://*.yookassa.ru https://static.yoomoney.ru https://yoomoney.ru https://*.yoomoney.ru https://checkout.yoomoney.ru;
+  frame-src 'self' https://yookassa.ru https://yoomoney.ru https://checkout.yoomoney.ru;
   media-src 'self';
   object-src 'none';
   base-uri 'self';

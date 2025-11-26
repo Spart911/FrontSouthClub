@@ -551,18 +551,19 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
       const script = document.createElement('script');
       script.src = 'https://yookassa.ru/checkout-widget/v1/checkout-widget.js';
       script.async = true;
-      
+      script.defer = true; // Добавляем defer для дополнительной защиты от блокировки
+
       script.onload = () => {
         console.log('YooKassa script loaded');
         resolve();
       };
-      
+
       script.onerror = () => {
         console.error('Failed to load YooKassa script');
         reject(new Error('Не удалось загрузить виджет оплаты'));
       };
 
-      document.body.appendChild(script);
+      document.head.appendChild(script); // Добавляем в head вместо body
     });
   };
 
@@ -700,7 +701,7 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
               <div class="loading">Загрузка формы оплаты...</div>
             </div>
           </div>
-          <script src="https://yookassa.ru/checkout-widget/v1/checkout-widget.js"></script>
+          <script src="https://yookassa.ru/checkout-widget/v1/checkout-widget.js" async defer></script>
           <script>
             try {
               const checkout = new YooMoneyCheckoutWidget({

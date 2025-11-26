@@ -647,6 +647,7 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
 
       console.log('Full order data:', order);
       console.log('Order number:', order.order_number);
+      console.log('Order id from response:', orderResponse.order_id);
       console.log('Confirmation token:', orderResponse.confirmation_token);
 
       // Создаем объект с данными для оплаты
@@ -717,9 +718,14 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
         padding-bottom: 20px;
         border-bottom: 1px solid #eee;
       `;
+
+      // Проверяем наличие номера заказа (может быть order_number или number)
+      const orderNumber = order.order_number || (order as any).number || orderResponse.order_id;
+      const orderNumberText = orderNumber ? `<p style="margin: 5px 0; color: #666;">Номер заказа: <strong>${orderNumber}</strong></p>` : '';
+
       header.innerHTML = `
         <h2 style="margin: 0 0 10px 0; color: #333; font-size: 24px;">Оплата заказа</h2>
-        <p style="margin: 5px 0; color: #666;">Номер заказа: <strong>${order.order_number}</strong></p>
+        ${orderNumberText}
         <p style="margin: 5px 0; color: #666;">Сумма к оплате: <strong>${total} RUB</strong></p>
       `;
 
@@ -733,7 +739,6 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
         color: #666;
         font-size: 16px;
       `;
-      paymentForm.innerHTML = 'Загрузка формы оплаты...';
 
       paymentContent.appendChild(closeButton);
       paymentContent.appendChild(header);
@@ -756,6 +761,9 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
         }
       };
       document.addEventListener('keydown', handleEscape);
+
+      // Показываем сообщение загрузки
+      paymentForm.innerHTML = 'Загрузка формы оплаты...';
 
       // Загружаем скрипт YooKassa и инициализируем виджет
       const loadPaymentWidget = async () => {

@@ -634,6 +634,9 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
         total_amount: total
       };
 
+      // Отладка: проверим что отправляем в API
+      console.log('Order data to send:', orderData);
+
       const orderResponse = await apiService.createOrder(orderData);
 
       // Отладка: проверим что вернул API

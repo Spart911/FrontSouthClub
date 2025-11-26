@@ -492,7 +492,7 @@ getToken(): string | null {
   async createOrder(order: OrderCreate): Promise<OrderCreateResponse> {
     return this.request<OrderCreateResponse>('/orders/', {
       method: 'POST',
-      body: order,
+      body: JSON.stringify(order),
     });
   }
 

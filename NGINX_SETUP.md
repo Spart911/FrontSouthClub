@@ -230,52 +230,51 @@ sudo tail -f /var/log/nginx/access.log
 
 ## Content Security Policy (CSP)
 
-### Добавьте в server блок nginx:
+⚠️ **CSP теперь находится в index.html через meta-тег, а не в Nginx!**
+
+CSP добавлен в `index.html` в виде meta-тега:
+```html
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' 'unsafe-inline' 'unsafe-eval' data: https://yookassa.ru https://*.yookassa.ru https://static.yoomoney.ru https://*.yoomoney.ru;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+  font-src 'self' https://fonts.gstatic.com data:;
+  img-src 'self' data: https: blob:;
+  connect-src 'self' https://southclub.ru https://yookassa.ru https://*.yookassa.ru https://static.yoomoney.ru https://yoomoney.ru https://*.yoomoney.ru;
+  frame-src 'self' https://yookassa.ru https://yoomoney.ru;
+  media-src 'self';
+  object-src 'none';
+  base-uri 'self';
+  form-action 'self';
+  upgrade-insecure-requests;
+  block-all-mixed-content;
+">
+```
+
+### Добавьте в Nginx только базовые заголовки безопасности:
 
 ```nginx
 server {
     listen 443 ssl http2;
     server_name southclub.ru www.southclub.ru;
-    
-    # Content Security Policy (CSP)
-    add_header Content-Security-Policy "
-      default-src 'self';
-      script-src 'self' 'unsafe-inline' 'unsafe-eval' data: https://yookassa.ru https://*.yookassa.ru https://static.yoomoney.ru https://*.yoomoney.ru;
-      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-      font-src 'self' https://fonts.gstatic.com data:;
-      img-src 'self' data: https: blob:;
-      connect-src 'self' https://southclub.ru https://yookassa.ru https://static.yoomoney.ru https://yoomoney.ru;
-      frame-src 'self' https://yookassa.ru https://yoomoney.ru;
-      media-src 'self';
-      object-src 'none';
-      base-uri 'self';
-      form-action 'self';
-      upgrade-insecure-requests;
-      base-uri 'self';
-      form-action 'self';
-      frame-ancestors 'none';
-      upgrade-insecure-requests;
-      block-all-mixed-content;
-    " always;
-    
-    # Дополнительные заголовки безопасности
+
+    # Базовые заголовки безопасности (CSP теперь в HTML)
     add_header X-Frame-Options "SAMEORIGIN" always;
     add_header X-Content-Type-Options "nosniff" always;
     add_header X-XSS-Protection "1; mode=block" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
     add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
-    
+
     # HSTS (HTTP Strict Transport Security)
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
-    
+
     # Остальная конфигурация...
 }
 ```
 
 ### Что защищает CSP:
 - ✅ **XSS атаки** - блокирует неавторизованные скрипты
-- ✅ **Clickjacking** - запрещает встраивание в iframe
+- ✅ **Clickjacking** - запрещает встраивание в iframe (через X-Frame-Options)
 - ✅ **Mixed content** - принудительный HTTPS
 - ✅ **Data injection** - ограничивает источники данных
 - ✅ **Plugin attacks** - блокирует плагины

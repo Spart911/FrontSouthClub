@@ -206,9 +206,16 @@ export interface Order {
   status: 'pending' | 'paid' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   payment_url?: string;
   payment_id?: string;
+  confirmation_token?: string; // Токен для инициализации виджета YooKassa
   delivery_time?: string;
   created_at: string;
   updated_at: string;
+}
+
+// Ответ от API при создании заказа
+export interface OrderCreateResponse {
+  order_id: number;
+  confirmation_token: string;
 }
 
 export interface OrderStatus {
@@ -482,14 +489,14 @@ getToken(): string | null {
 }
 
   // Orders API
-  async createOrder(order: OrderCreate): Promise<Order> {
-    return this.request<Order>('/orders/', {
+  async createOrder(order: OrderCreate): Promise<OrderCreateResponse> {
+    return this.request<OrderCreateResponse>('/orders/', {
       method: 'POST',
-      body: JSON.stringify(order),
+      body: order,
     });
   }
 
-  async getOrder(orderId: string): Promise<Order> {
+  async getOrder(orderId: number): Promise<Order> {
     return this.request<Order>(`/orders/${orderId}`);
   }
 

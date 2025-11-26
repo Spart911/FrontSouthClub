@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { buildFileUrl, apiService } from '../services/api';
-import type { OrderCreate, OrderItem } from '../services/api';
+import type { OrderCreate, OrderItem, OrderCreateResponse } from '../services/api';
 import { cartService } from '../services/cartService';
 import { useConsent } from '../hooks/useConsent';
 
@@ -634,8 +634,24 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
         total_amount: total
       };
 
-      const order = await apiService.createOrder(orderData);
-      
+      const orderResponse = await apiService.createOrder(orderData);
+
+      // Отладка: проверим что вернул API
+      console.log('Order response:', orderResponse);
+
+      // Получаем полные данные заказа
+      const order = await apiService.getOrder(orderResponse.order_id);
+
+      console.log('Full order data:', order);
+      console.log('Order number:', order.order_number);
+      console.log('Confirmation token:', orderResponse.confirmation_token);
+
+      // Создаем объект с данными для оплаты
+      const paymentData = {
+        ...order,
+        confirmation_token: orderResponse.confirmation_token
+      };
+
       // Создаем модальное окно оплаты вместо нового окна браузера
       const paymentModal = document.createElement('div');
       paymentModal.id = 'payment-modal';
@@ -757,8 +773,13 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
           // Ждем небольшую паузу для инициализации
           await new Promise(resolve => setTimeout(resolve, 100));
 
+          // Проверяем наличие confirmation_token
+          if (!orderResponse.confirmation_token) {
+            throw new Error('Отсутствует токен подтверждения оплаты');
+          }
+
           const checkout = new window.YooMoneyCheckoutWidget({
-            confirmation_token: order.payment_url,
+            confirmation_token: orderResponse.confirmation_token,
             return_url: `${window.location.origin}/success?order_id=${order.id}&order_number=${order.order_number}`,
             error_callback: function(error) {
               console.error('Ошибка виджета оплаты:', error);

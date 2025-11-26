@@ -272,6 +272,21 @@ server {
 }
 ```
 
+### Формат ответа API создания заказа:
+
+API создания заказа возвращает объект в формате:
+```json
+{
+  "order_id": 21,
+  "confirmation_token": "ct-30b957cc-000f-5000-8000-17b17ee4fb4c"
+}
+```
+
+Frontend автоматически:
+1. Получает `order_id` и `confirmation_token`
+2. Запрашивает полные данные заказа через GET `/api/v1/orders/{order_id}`
+3. Инициализирует виджет YooKassa с `confirmation_token`
+
 ### Что защищает CSP:
 - ✅ **XSS атаки** - блокирует неавторизованные скрипты
 - ✅ **Clickjacking** - запрещает встраивание в iframe (через X-Frame-Options)

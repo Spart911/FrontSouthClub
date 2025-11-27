@@ -509,7 +509,7 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
     return numbers.length === 11;
   };
 
-  const deliveryCost = 299;
+  const deliveryCost = 1;
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const total = subtotal + deliveryCost;
 

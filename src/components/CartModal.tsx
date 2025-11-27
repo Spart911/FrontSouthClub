@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { buildFileUrl, apiService } from '../services/api';
+import { buildFileUrl, apiService, getSizeValue } from '../services/api';
 import type { OrderCreate, OrderItem, OrderCreateResponse } from '../services/api';
 import { cartService } from '../services/cartService';
 import { useConsent } from '../hooks/useConsent';
@@ -395,10 +395,10 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
   });
 
   const getDeliveryDateTime = () => {
-  
-    const [, endHour] = formData.deliveryTime.split('-'); // убрали startHour
-    const end = parseInt(endHour, 10);
-    const hourStr = String(end).padStart(2, '0');
+
+    const [startHour] = formData.deliveryTime.split('-'); // берем начало интервала
+    const start = parseInt(startHour, 10);
+    const hourStr = String(start).padStart(2, '0');
     return `${formData.deliveryDate}T${hourStr}:00:00`;
   };
   
@@ -612,7 +612,7 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
         product_id: item.id,
         name: item.name,
         quantity: item.quantity,
-        size: parseInt(item.size) || 0, // Преобразуем размер в число
+        size: getSizeValue(item.size), // Правильно преобразуем текстовый размер в число
         price: item.price
       }));
 

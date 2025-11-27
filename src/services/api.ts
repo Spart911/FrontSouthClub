@@ -80,6 +80,11 @@ export const getSizeLabel = (size: number): string => {
   return option ? option.label : `Size ${size}`;
 };
 
+export const getSizeValue = (sizeLabel: string): number => {
+  const option = SIZE_OPTIONS.find(opt => opt.label === sizeLabel);
+  return option ? option.value : 0;
+};
+
 // Types based on API schema
 export interface Product {
   id: string;

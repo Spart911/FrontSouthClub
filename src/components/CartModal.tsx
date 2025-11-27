@@ -287,6 +287,14 @@ const FormSection = styled.div`
 
 const FormGroup = styled.div`
   margin-bottom: 16px;
+  width: 100%;
+  box-sizing: border-box;
+
+  /* Ensure proper width on mobile */
+  @media (max-width: 768px) {
+    width: 100%;
+    min-width: 0; /* Allow flex shrinking */
+  }
 `;
 
 const Label = styled.label`
@@ -306,10 +314,43 @@ const Input = styled.input`
   font-family: 'HeatherGreen', 'Helvetica', sans-serif;
   font-size: 1.4rem;
   letter-spacing: 0.05em;
-  
+  box-sizing: border-box;
+
+  /* Fix for mobile date inputs */
+  &[type="date"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: white;
+    min-height: 44px; /* iOS touch target minimum */
+
+    /* Remove default date picker styling */
+    &::-webkit-calendar-picker-indicator {
+      background: none;
+      color: #666;
+      cursor: pointer;
+      padding: 0;
+      margin: 0;
+    }
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      display: none;
+    }
+
+    /* Ensure consistent width on mobile */
+    max-width: 100%;
+    min-width: 0;
+  }
+
   &:focus {
     outline: none;
     border-color: #1e3ea8;
+  }
+
+  /* Mobile specific fixes */
+  @media (max-width: 768px) {
+    font-size: 16px; /* Prevent zoom on iOS */
+    min-height: 44px;
   }
 `;
 
@@ -428,14 +469,45 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
   // Block body scroll when cart is open
   useEffect(() => {
     if (isOpen) {
+      // Save current scroll position
+      const scrollY = window.scrollY;
+
+      // Prevent scroll on iOS and other mobile devices
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
+
+      // Additional iOS specific prevention
+      document.body.style.touchAction = 'none';
+
+      // Store scroll position for cleanup
+      document.body.dataset.scrollY = scrollY.toString();
     } else {
+      // Restore scroll position
+      const scrollY = parseInt(document.body.dataset.scrollY || '0', 10);
+
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
       document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+
+      // Restore scroll position
+      window.scrollTo(0, scrollY);
+
+      // Clean up stored data
+      delete document.body.dataset.scrollY;
     }
 
     // Cleanup on unmount
     return () => {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
       document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+      delete document.body.dataset.scrollY;
     };
   }, [isOpen]);
 

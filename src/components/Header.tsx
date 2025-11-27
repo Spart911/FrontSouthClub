@@ -200,9 +200,16 @@ export const Header = () => {
     // Also listen for custom cart update events
     window.addEventListener('cartUpdated', updateCartCount);
 
+    // Listen for cart open events
+    const handleOpenCart = () => {
+      setIsCartOpen(true);
+    };
+    window.addEventListener('openCart', handleOpenCart);
+
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('cartUpdated', updateCartCount);
+      window.removeEventListener('openCart', handleOpenCart);
     };
   }, []);
 

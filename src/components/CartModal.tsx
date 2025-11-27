@@ -425,6 +425,20 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
     };
   }, []);
 
+  // Block body scroll when cart is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   // Load cart items from localStorage on component mount
   useEffect(() => {
     const loadCartItems = () => {

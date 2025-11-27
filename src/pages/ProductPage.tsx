@@ -814,7 +814,10 @@ const ProductPage: React.FC = () => {
 
     // Add to cart using cart service
     cartService.addToCart(product, selectedSize);
-    
+
+    // Open cart automatically
+    window.dispatchEvent(new CustomEvent('openCart'));
+
     setShowNotification(true);
     setTimeout(() => setShowNotification(false), 3000);
   };

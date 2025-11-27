@@ -129,7 +129,7 @@ const AddToCartButton = styled.button`
 const InfoSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 2px;
   
   @media (max-width: 768px) {
     gap: 25px;

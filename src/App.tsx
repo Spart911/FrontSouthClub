@@ -26,7 +26,6 @@ const OfferPage = lazy(() => import('./pages/OfferPage'));
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 const SuccessPage = lazy(() => import('./pages/SuccessPage'));
-const OrdersPage = lazy(() => import('./pages/OrdersPage'));
 const Footer = lazy(() => import('./components/Footer'));
 
 const AppContent = () => {
@@ -127,11 +126,6 @@ const AppContent = () => {
         <Route path="/success" element={
           <Suspense fallback={<div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Загрузка...</div>}>
             <SuccessPage />
-          </Suspense>
-        } />
-        <Route path="/orders" element={
-          <Suspense fallback={<div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Загрузка...</div>}>
-            <OrdersPage />
           </Suspense>
         } />
       </Routes>

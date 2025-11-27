@@ -258,12 +258,6 @@ const SuccessPage: React.FC = () => {
     return statusMap[status] || status;
   };
 
-  const handleTrackOrder = () => {
-    if (order?.email) {
-      navigate(`/orders?email=${encodeURIComponent(order.email)}`);
-    }
-  };
-
   const handleContinueShopping = () => {
     navigate('/');
   };
@@ -338,9 +332,6 @@ const SuccessPage: React.FC = () => {
         )}
 
         <ActionButtons>
-          <Button variant="primary" onClick={handleTrackOrder}>
-            Отследить заказ
-          </Button>
           <Button onClick={handleContinueShopping}>
             Продолжить покупки
           </Button>

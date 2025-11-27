@@ -395,20 +395,13 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
   });
 
   const getDeliveryDateTime = () => {
-    if (!formData.deliveryDate || !formData.deliveryTime) return '';
-
-    const [startHour, endHour] = formData.deliveryTime.split('-');
-    const start = parseInt(startHour, 10);
+  
+    const [, endHour] = formData.deliveryTime.split('-'); // убрали startHour
     const end = parseInt(endHour, 10);
-
-    if (isNaN(start) || isNaN(end)) return '';
-
-    const middleHour = Math.floor((start + end) / 2);
-    const hourStr = String(middleHour).padStart(2, '0');
-
+    const hourStr = String(end).padStart(2, '0');
     return `${formData.deliveryDate}T${hourStr}:00:00`;
   };
-
+  
   const [showTimeOptions, setShowTimeOptions] = useState(false);
 
   // Sync consent state

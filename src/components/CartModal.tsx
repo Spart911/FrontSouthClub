@@ -744,11 +744,14 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0,0,0,0.8);
+        background: rgba(0, 0, 0, 0.7);
         z-index: 10000;
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: ${window.innerWidth < 400 ? '5px' : '10px'};
+        box-sizing: border-box;
+        overflow-y: auto;
         font-family: Arial, sans-serif;
       `;
 
@@ -756,13 +759,14 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
       paymentContent.style.cssText = `
         background: white;
         border-radius: 10px;
-        padding: 30px;
+        padding: ${window.innerWidth < 400 ? '20px' : '30px'};
         max-width: 600px;
-        width: 90%;
-        max-height: 80vh;
+        width: ${window.innerWidth < 400 ? 'calc(100vw - 10px)' : '90%'};
+        max-height: 90vh;
         overflow-y: auto;
         position: relative;
         box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        box-sizing: border-box;
       `;
 
       const closeButton = document.createElement('button');
@@ -811,12 +815,17 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
       const paymentForm = document.createElement('div');
       paymentForm.id = 'payment-form';
       paymentForm.style.cssText = `
-        min-height: 400px;
+        min-height: ${window.innerWidth < 400 ? '250px' : '350px'};
+        max-height: ${window.innerWidth < 400 ? '40vh' : '60vh'};
+        overflow-y: auto;
         display: flex;
         align-items: center;
         justify-content: center;
         color: #666;
         font-size: 16px;
+        margin-top: 15px;
+        width: 100%;
+        box-sizing: border-box;
       `;
 
       paymentContent.appendChild(closeButton);
@@ -870,6 +879,16 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
           const checkout = new window.YooMoneyCheckoutWidget({
             confirmation_token: orderResponse.confirmation_token,
             return_url: `${window.location.origin}/success?order_id=${order.id}&order_number=${order.order_number}`,
+            customization: {
+              modal: false,
+              colors: {
+                controlPrimary: '#1e3ea8',
+                background: '#ffffff'
+              },
+              fonts: {
+                family: 'HeatherGreen, Helvetica, sans-serif'
+              }
+            },
             error_callback: function(error) {
               console.error('Ошибка виджета оплаты:', error);
               paymentForm.innerHTML = '<div style="color: #d32f2f; background: #ffebee; padding: 20px; border-radius: 5px; text-align: center; border: 1px solid #ffcdd2;">Произошла ошибка при оплате. Пожалуйста, попробуйте позже или обратитесь в поддержку.</div>';

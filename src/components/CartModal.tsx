@@ -745,13 +745,15 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
         width: 100%;
         height: 100%;
         background: rgba(0, 0, 0, 0.7);
-        z-index: 10000;
+        z-index: 10001;
         display: flex;
-        align-items: center;
+        flex-direction: column;
         justify-content: center;
-        padding: ${window.innerWidth < 400 ? '5px' : '10px'};
+        align-items: center;
+        padding: ${window.innerWidth < 400 ? '10px' : '20px'};
         box-sizing: border-box;
         overflow-y: auto;
+        overflow-x: hidden;
         font-family: Arial, sans-serif;
       `;
 
@@ -759,13 +761,22 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
       paymentContent.style.cssText = `
         background: white;
         border-radius: 10px;
-        padding: ${window.innerWidth < 400 ? '20px' : '30px'};
+        padding: 0;
         max-width: 600px;
-        width: ${window.innerWidth < 400 ? 'calc(100vw - 10px)' : '90%'};
+        width: 100%;
         max-height: 90vh;
         overflow-y: auto;
         position: relative;
         box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        box-sizing: border-box;
+        margin: auto;
+      `;
+
+      // Создаем внутренний контейнер с padding
+      const contentWrapper = document.createElement('div');
+      contentWrapper.style.cssText = `
+        padding: ${window.innerWidth < 400 ? '20px' : '30px'};
+        width: 100%;
         box-sizing: border-box;
       `;
 
@@ -828,9 +839,13 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
         box-sizing: border-box;
       `;
 
+      // Добавляем элементы во внутренний контейнер
+      contentWrapper.appendChild(header);
+      contentWrapper.appendChild(paymentForm);
+
+      // Добавляем контейнер и кнопку закрытия в paymentContent
+      paymentContent.appendChild(contentWrapper);
       paymentContent.appendChild(closeButton);
-      paymentContent.appendChild(header);
-      paymentContent.appendChild(paymentForm);
       paymentModal.appendChild(paymentContent);
       document.body.appendChild(paymentModal);
 
@@ -838,6 +853,8 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
       paymentModal.onclick = (e) => {
         if (e.target === paymentModal) {
           document.body.removeChild(paymentModal);
+          // Восстанавливаем возможность прокрутки paymentModal
+          paymentModal.style.overflow = '';
         }
       };
 

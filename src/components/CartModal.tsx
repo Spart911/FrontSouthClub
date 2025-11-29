@@ -827,7 +827,7 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
       paymentForm.id = 'payment-form';
       paymentForm.style.cssText = `
         min-height: ${window.innerWidth < 400 ? '250px' : '350px'};
-        max-height: ${window.innerWidth < 400 ? '40vh' : '60vh'};
+
         overflow-y: auto;
         display: flex;
         align-items: center;
